@@ -4,9 +4,9 @@
 using namespace UGit;
 
 struct UGit::BranchRegister{
-	UGit::Branch* item; //El item es el branch
-	string clave; // La clave es el nombre del branch
-	UGit::BranchRegister* siguiente; // El siguiente de la lista
+	UGit::Branch* item;					//El item es el branch
+	string clave;						// La clave es el nombre del branch
+	UGit::BranchRegister* siguiente;	// El siguiente de la lista
 };
 
 UGit::BranchRegister * UGit::CreateBranchRegister(UGit::Branch* branch)
