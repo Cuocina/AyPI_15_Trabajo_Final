@@ -152,15 +152,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AyPI_15_Trabajo_Final.cpp" />
+    <ClCompile Include="Branch.cpp" />
     <ClCompile Include="Commit.cpp" />
+    <ClCompile Include="CommitBag.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="DateTime.cpp" />
+    <ClCompile Include="Git.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Branch.h" />
+    <ClInclude Include="BranchRegister.h" />
     <ClInclude Include="Commit.h" />
+    <ClInclude Include="CommitBag.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="DateTime.h" />
+    <ClInclude Include="Git.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
