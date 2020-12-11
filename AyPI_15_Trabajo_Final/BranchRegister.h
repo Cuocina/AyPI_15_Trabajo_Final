@@ -5,7 +5,7 @@
 
 using namespace UGit;
 
-namespace UGit{
+namespace UGit {
 
 	struct BranchRegister;
 	struct NodeBranchRegister;
@@ -36,8 +36,6 @@ namespace UGit{
 	// Precondición:: @name debe ser el nombre de un branch existencia
 	// Postcondición: Devuelve el Branch que contenga @name
 	Branch* GetBranch(BranchRegister* branchregister, string name);
-
-	//Postcondicion: Devuelve la unica instancia de @branchregister
 
 }
 
