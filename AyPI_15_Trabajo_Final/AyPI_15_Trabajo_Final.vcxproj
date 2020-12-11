@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="AyPI_15_Trabajo_Final.cpp" />
     <ClCompile Include="Branch.cpp" />
+    <ClCompile Include="BranchRegister.cpp" />
     <ClCompile Include="Commit.cpp" />
     <ClCompile Include="CommitBag.cpp" />
     <ClCompile Include="Context.cpp" />
