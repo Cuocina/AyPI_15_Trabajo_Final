@@ -10,6 +10,7 @@ namespace UGit {
 	int Count(CommitBag* bag);
 	namespace UCommitBagIterator {
 		struct CommitBagIterator;
+		CommitBagIterator* CreateIterator(UGit::Commit* commit);
 		CommitBagIterator* Begin(CommitBag* bag);
 		void Next(const CommitBagIterator* iterator);
 		bool IsEnd(const CommitBagIterator* iterator);

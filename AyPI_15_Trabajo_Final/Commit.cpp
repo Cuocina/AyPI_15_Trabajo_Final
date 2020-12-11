@@ -58,16 +58,16 @@ UUser::User* UGit::GetAuthor(const Commit* commit) {
 string UGit::GetMessage(const Commit* commit) {
 	return commit->message;
 }
-// Precondicion: @commit es una intancia valida
-	// Postcondicion: Devuelve los commits predecesores de @commit en una instancia del TDA CommitBag
-void * UGit::GetParents(const Commit * commit)
-{
 
-	return nullptr;
-}
+UGit::CommitBag* UGit::GetParents(Commit* commit) {
+	UGit::Commit* iterator = commit;
+	UGit::CommitBag* bag = UGit::CreateBag();
+	while (iterator->parent != NULL) {
+		UGit::Add(bag, commit);
+		iterator = iterator->parent;
+	}
 
-Commit* UGit::GetParent(const Commit* commit) {
-	return commit->parent;
+	return bag;
 }
 
 string UGit::GetHashCode(const Commit* commit) {
