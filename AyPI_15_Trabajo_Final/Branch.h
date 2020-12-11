@@ -38,7 +38,7 @@ namespace UGit {
 	 * Precondicion: @branch es una instancia valida
 	 * Postcondicion: Libera todos los recursos asociados a branch
 	 */
-	void Destroy(Branch* branch);
+	void DestroyBranch(Branch* branch);
 }
 
 #endif

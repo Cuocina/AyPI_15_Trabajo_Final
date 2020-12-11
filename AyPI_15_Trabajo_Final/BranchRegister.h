@@ -17,7 +17,7 @@ namespace UGit {
 
 	// Precondición: @branch y @branchregister son instancias validas
 	// Postcondición: Devuelve una instancia válida
-	NodeBranchRegister* CreateNodeBranchRegister(UGit::Branch* branch, NodeBranchRegister* siguiente);
+	NodeBranchRegister* CreateNodeBranchRegister(UGit::Branch* branch, NodeBranchRegister* siguiente, NodeBranchRegister* anterior);
 
 	// Precondición: @branchregister y @branch son instancias validas
 	// Postcondición: Si @branch no existe en @branchregister lo agrega
@@ -34,8 +34,35 @@ namespace UGit {
 
 	// Precondición: @branchregister debe ser una instancia válida 
 	// Precondición:: @name debe ser el nombre de un branch existencia
-	// Postcondición: Devuelve el Branch que contenga @name
-	Branch* GetBranch(BranchRegister* branchregister, string name);
+	// Postcondición: Devuelve el NodeBranchRegister que contenga un branch con @name
+	NodeBranchRegister* GetNodeBranch(BranchRegister * branchregister, string name);
+
+
+
+	// TO-DO
+
+	// Precondición: @node es una instancia valida
+	// Postcondicion: Devuelve el Branch de @node
+
+	UGit::Branch* GetBranch(NodeBranchRegister* node)
+
+
+
+	// Precondición: @node y @previuos son instancias validas
+	// Postcondición: Establace a @previous como el anterior a @nodo
+	void ChangePrevious(NodeBranchRegister* node, NodeBranchRegister* previous);
+
+	// Precondición: @node y @next son instancias validas
+	// Postcondición: Establace a @next como el anterior a @nodo
+	void ChangeNext(NodeBranchRegister* node, NodeBranchRegister* next);
+
+	// Precondición: @node es una instancia valida
+	// Postcondición: Devuelve el anterior nodo a  @nodo
+	NodeBranchRegister* GetPrevious(NodeBranchRegister* node);
+
+	// Precondición: @node es una instancia valida
+	// Postcondición: Devuelve el siguiente nodo a  @nodo
+	NodeBranchRegister* GetNext(NodeBranchRegister* node);
 
 }
 

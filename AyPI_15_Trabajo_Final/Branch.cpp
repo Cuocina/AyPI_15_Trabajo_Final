@@ -32,7 +32,7 @@ void UGit::SetLastCommit(Branch * branch, Commit * commit)
 	branch->latest = commit;
 }
 
-void UGit::Destroy(Branch * branch)
+void UGit::DestroyBranch(Branch * branch)
 {
 	delete branch;
 }

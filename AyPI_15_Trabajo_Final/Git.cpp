@@ -80,24 +80,23 @@ Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch)
 		return branch;
 	}
 	else {
-		UGit::Destroy(branch);
+		UGit::DestroyBranch(branch);
 
 		return NULL;
 	}
 }
 
-/*
-	 * Precondicion: @git es una instancia valida
-	 * Postcondicion: Si @branchName existe en la register de branch lo quita de la register y lo destruye
-	 * Si @branchName no existe no realiza ninguna accion.
-	 */
 void UGit::DeleteBranch(Git * git, string branchName)
 {
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
-	UGit::Branch* branchAssistant = UGit::CreateBranch(branchName, NULL);
+	UGit::Branch* branchAssistant = UGit::CreateBranch(branchName,NULL);
+	UGit::NodeBranchRegister* Assistant = UGit::CreateNodeBranchRegister(branchAssistant, NULL, NULL);
 	if (UGit::IsTheBranch(branchRegister, branchAssistant)) {
-		UGit::Branch* branchToDelete = GetBranch(branchRegister, branchName);
-
+		UGit::NodeBranchRegister* nodeToDelete = UGit::GetNodeBranch(branchRegister, branchName);
+		UGit::NodeBranchRegister* previous = UGit::GetPrevious(nodeToDelete);
+		UGit::NodeBranchRegister* next = UGit::GetNext(nodeToDelete);
+		UGit::ChangeNext(previous, next);
+		UGit::ChangePrevious(next, previous);
+		UGit::DestroyBranch(UGit::GetBranch(nodeToDelete));
 	}
-
 }

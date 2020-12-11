@@ -32,7 +32,7 @@ int main() {
 	AddAllDeveloperFeatureChanges(git, Features, 3);
 	PrepareRelease(git, head, featureBranches, 3);
 
-	UGit::Destroy(head);
+	UGit::DestroyBranch(head);
 	UGit::Destroy(git);
 	FreeGarbageCollector();
 	return 0;
