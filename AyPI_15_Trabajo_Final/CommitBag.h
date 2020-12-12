@@ -3,12 +3,10 @@
 
 #include "Commit.h"
 
-using namespace UGit;
-
-namespace UGit {
+namespace UGit{
 	struct CommitBag;
 	CommitBag* CreateBag();
-	void Add(CommitBag* bag, Commit* commit);
+	void Add(CommitBag* bag, UGit::Commit* commit);
 	// Función auxliciar agregada
 
 	// Precondición: @bag y @commitsFrom son instancias válidas

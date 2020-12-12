@@ -5,6 +5,7 @@
 #include <ctime>
 #include <random>
 #include "Commit.h"
+#include "CommitBag.h"
 
 using namespace UGit;
 using namespace UContext;
@@ -12,7 +13,7 @@ using namespace UDateTime;
 using namespace UUser;
 using namespace std;
 
-struct Commit {
+struct UGit::Commit {
 	UGit::Commit* parent;
 	string message;
 	string hashCode;
@@ -37,8 +38,8 @@ string CreateHashCode() {
 	return hashCode;
 }
 
-UGit::Commit* UGit::CreateCommit(Commit* parent, string message) {
-	Commit* commit = new Commit;
+UGit::Commit* UGit::CreateCommit(UGit::Commit* parent, string message) {
+	UGit::Commit* commit = new UGit::Commit;
 	commit->parent = parent;
 	commit->message = message;
 	commit->hashCode = CreateHashCode();
@@ -59,7 +60,7 @@ string UGit::GetMessage(const Commit* commit) {
 	return commit->message;
 }
 
-UGit::CommitBag* UGit::GetParents(Commit* commit) {
+void* UGit::GetParents(Commit* commit) {
 	UGit::Commit* iterator = commit;
 	UGit::CommitBag* bag = UGit::CreateBag();
 	while (iterator->parent != NULL) {

@@ -4,7 +4,6 @@
 #include <string>
 #include "User.h"
 #include "DateTime.h"
-#include "CommitBag.h"
 
 using std::string;
 using UDateTime::DateTime;
@@ -40,7 +39,7 @@ namespace UGit{
 
 	// Precondicion: @commit es una intancia valida
 	// Postcondicion: Devuelve los commits predecesores de @commit en una instancia del TDA CommitBag
-	CommitBag* GetParents(Commit* commit);
+	void* GetParents(Commit* commit);
 
 	// Precondicion: @commit es una intancia valida
 	// Postcondicion: Devuelve el hash code de @commit
@@ -54,7 +53,5 @@ namespace UGit{
 	// Postcondicion: Libera todos los recursos asociados de @commit
 	void DestroyCommit(Commit* commit);
 }
-
-
 #endif
 

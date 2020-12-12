@@ -1,4 +1,4 @@
-#include "Git.h""
+#include "Git.h"
 #include "Branch.h"
 #include "BranchRegister.h"
 #include "CommitBag.h"
@@ -6,6 +6,11 @@
 
 using namespace UGit;
 using namespace UCommitBagIterator;
+
+struct GitEventsBranch;
+struct GitEventsCommit;
+struct EventBranch;
+struct EventCommit;
 
 struct UGit::Git {
 	GitEventsBranch* gitEventsBranch;
@@ -35,8 +40,6 @@ struct EventCommit {
 };
 
 // Instancias únicas
-GitEventsBranch* uniqueGitEventsBranch = CreateGitEventsBranch();
-GitEventsCommit * uniqueGitEventsCommit = CreateGitEventsCommit();
 GitEventsBranch* CreateGitEventsBranch(); 
 GitEventsCommit* CreateGitEventsCommit();
 
@@ -91,10 +94,7 @@ Git* UGit::CreateGit()
 
 GitEventsBranch * CreateGitEventsBranch()
 {
-	if (uniqueGitEventsBranch->first != NULL) {
-		GitEventsBranch* uniqueGitEventsBranch = new GitEventsBranch;
-		uniqueGitEventsBranch->first = NULL;
-	}
+	GitEventsBranch* uniqueGitEventsBranch = new GitEventsBranch;
 
 	return uniqueGitEventsBranch;
 }
@@ -102,10 +102,8 @@ GitEventsBranch * CreateGitEventsBranch()
 
 GitEventsCommit * CreateGitEventsCommit()
 {
-	if (uniqueGitEventsCommit->first != NULL) {
 		GitEventsCommit* uniqueGitEventsCommit = new GitEventsCommit;
 		uniqueGitEventsCommit->first = NULL;
-	}
 
 	return uniqueGitEventsCommit;
 }
@@ -150,11 +148,15 @@ void UGit::DeleteBranch(Git * git, string branchName)
 	 */
 UGit::Commit* UGit::NewCommit(Git * git, string branchName, string message)
 {
-	UGit::Commit* newCommit;
-	if (UGit::IsTheBranch(UGit::GetBranchRegister(), UGit::GetBranch(UGit::GetNodeBranch(UGit::GetBranchRegister(),branchName))))
-		newCommit = UGit::CreateCommit(UGit::GetLastCommit(UGit::GetBranch(UGit::GetNodeBranch(UGit::GetBranchRegister(), branchName))), message);
-
-	return newCommit;
+	UGit::Commit* newCommit = UGit::CreateCommit(UGit::GetLastCommit(UGit::GetBranch(UGit::GetNodeBranch(UGit::GetBranchRegister(), branchName))), message);
+	if (UGit::IsTheBranch(UGit::GetBranchRegister(), UGit::GetBranch(UGit::GetNodeBranch(UGit::GetBranchRegister(), branchName))))
+		return newCommit;
+	else {
+		UGit::DestroyCommit(newCommit);
+		return NULL;
+	}
+		
+	
 }
 
 void UGit::AddHook(Git * git, GitEvent event, Hook hook)
@@ -179,10 +181,15 @@ void UGit::Merge(Git * git, Branch * from, Branch * to)
 	if (UGit::GetLastCommit(from) != UGit::GetLastCommit(to)) {
 		string messaje = "branch" + UGit::GetName(from) + "merge on" + UGit::GetName(to);
 		UGit::CommitBag* bag = UGit::CreateBag();
-		UGit::AddCommits(bag, UGit::GetParents(UGit::GetLastCommit(from)), 2);
-		UGit::AddCommits(bag, UGit::GetParents(UGit::GetLastCommit(to)), 2);
+		UGit::AddCommits(bag, (UGit::CommitBag*)UGit::GetParents(UGit::GetLastCommit(from)), 2);
+		UGit::AddCommits(bag, (UGit::CommitBag*)UGit::GetParents(UGit::GetLastCommit(to)), 2);
 		UGit::Commit* newCommit = UGit::CreateCommit(bag, messaje);
 		UGit::SetLastCommit(to, newCommit);
 
 	}
+}
+
+void UGit::Destroy(Git * git)
+{
+	delete git;
 }

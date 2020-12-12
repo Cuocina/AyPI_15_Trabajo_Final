@@ -38,7 +38,7 @@ UGit::NodeBranchRegister* UGit::CreateNodeBranchRegister(UGit::Branch* branch, N
 
 void UGit::AddBranch(BranchRegister * branchRegister, Branch * branch)
 {
-	UGit::NodeBranchRegister* newLastestNode = CreateNodeBranchRegister(branch, NULL);
+	UGit::NodeBranchRegister* newLastestNode = CreateNodeBranchRegister(branch, NULL,NULL);
 	if (!IsTheBranch(branchRegister, branch)) {
 		NodeBranchRegister* lastestNode = GetLastestNode(branchRegister);
 		lastestNode->next = newLastestNode;
