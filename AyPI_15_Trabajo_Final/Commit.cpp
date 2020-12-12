@@ -12,7 +12,7 @@ using namespace UDateTime;
 using namespace UUser;
 using namespace std;
 
-struct UGit::Commit {
+struct Commit {
 	UGit::Commit* parent;
 	string message;
 	string hashCode;

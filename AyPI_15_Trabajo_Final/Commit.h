@@ -10,7 +10,7 @@ using std::string;
 using UDateTime::DateTime;
 using UUser::User;
 
-namespace UGit {
+namespace UGit{
 	struct Commit;
 
 	// Precondicion: Ninguna
@@ -40,7 +40,7 @@ namespace UGit {
 
 	// Precondicion: @commit es una intancia valida
 	// Postcondicion: Devuelve los commits predecesores de @commit en una instancia del TDA CommitBag
-	UGit::CommitBag* GetParents(Commit* commit);
+	CommitBag* GetParents(Commit* commit);
 
 	// Precondicion: @commit es una intancia valida
 	// Postcondicion: Devuelve el hash code de @commit
@@ -55,4 +55,6 @@ namespace UGit {
 	void DestroyCommit(Commit* commit);
 }
 
+
 #endif
+

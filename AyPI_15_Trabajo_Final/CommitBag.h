@@ -3,6 +3,8 @@
 
 #include "Commit.h"
 
+using namespace UGit;
+
 namespace UGit {
 	struct CommitBag;
 	CommitBag* CreateBag();
@@ -26,4 +28,3 @@ namespace UGit {
 }
 
 #endif
-

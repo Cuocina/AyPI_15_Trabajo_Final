@@ -1,4 +1,5 @@
 #include "CommitBag.h"
+#include "Commit.h"
 
 using namespace UGit;
 using namespace UCommitBagIterator;
@@ -55,7 +56,8 @@ void UGit::DestroyBag(CommitBag * bag)
 	delete bag;
 }
 
-CommitBagIterator * UGit::UCommitBagIterator::CreateIterator(UGit::Commit* commit)
+
+CommitBagIterator * UCommitBagIterator::CreateIterator(UGit::Commit* commit)
 {
 	UCommitBagIterator::CommitBagIterator* commitBagIterator = new UCommitBagIterator::CommitBagIterator;
 	commitBagIterator->item = commit;

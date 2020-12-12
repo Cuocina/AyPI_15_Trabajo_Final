@@ -2,6 +2,7 @@
 #include "Branch.h"
 #include "BranchRegister.h"
 #include "CommitBag.h"
+#include "Commit.h"
 
 using namespace UGit;
 using namespace UCommitBagIterator;
@@ -147,7 +148,7 @@ void UGit::DeleteBranch(Git * git, string branchName)
 /* To-DO
 	 * Si el commit es creado esta funcion tambien debe invocar todos los Hook asociados al evento NewCommitAdded pasando como parametro el commit creado. El orden de invocacion debe ser FIFO
 	 */
-Commit * UGit::NewCommit(Git * git, string branchName, string message)
+UGit::Commit* UGit::NewCommit(Git * git, string branchName, string message)
 {
 	UGit::Commit* newCommit;
 	if (UGit::IsTheBranch(UGit::GetBranchRegister(), UGit::GetBranch(UGit::GetNodeBranch(UGit::GetBranchRegister(),branchName))))
