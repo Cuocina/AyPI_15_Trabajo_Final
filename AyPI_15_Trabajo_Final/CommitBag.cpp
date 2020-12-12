@@ -29,6 +29,27 @@ void UGit::Add(CommitBag * bag, Commit * commit)
 	iterator->next = newLastetCommit;
 }
 
+void UGit::AddCommits(CommitBag * bag, CommitBag * bagFrom, int cantidad)
+{
+	UCommitBagIterator::CommitBagIterator* iterator = UCommitBagIterator::Begin(bagFrom);
+	for (int i = 0; i < UGit::Count(bagFrom) - cantidad; i++) {
+		UCommitBagIterator::Next(iterator);
+	}
+	for (int i = 0; i < cantidad; i++) {
+		UGit::Add(bag, UCommitBagIterator::GetCommit(iterator));
+	}
+}
+
+int UGit::Count(CommitBag * bag)
+{
+	int total = 0;
+	UCommitBagIterator::CommitBagIterator* iterator = bag->first;
+	while (iterator->next != NULL)
+		total++;
+
+	return total;
+}
+
 void UGit::DestroyBag(CommitBag * bag)
 {
 	delete bag;

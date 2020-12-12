@@ -7,6 +7,11 @@ namespace UGit {
 	struct CommitBag;
 	CommitBag* CreateBag();
 	void Add(CommitBag* bag, Commit* commit);
+	// Función auxliciar agregada
+
+	// Precondición: @bag y @commitsFrom son instancias válidas
+	// Postcondición: Agrega los @cantidad ultimos comits de @bagFrom a @bag
+	void AddCommits(CommitBag* bag, CommitBag* bagFrom, int cantidad);
 	int Count(CommitBag* bag);
 	namespace UCommitBagIterator {
 		struct CommitBagIterator;

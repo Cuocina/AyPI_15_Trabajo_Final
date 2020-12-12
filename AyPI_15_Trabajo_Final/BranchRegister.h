@@ -37,16 +37,9 @@ namespace UGit {
 	// Postcondición: Devuelve el NodeBranchRegister que contenga un branch con @name
 	NodeBranchRegister* GetNodeBranch(BranchRegister * branchregister, string name);
 
-
-
-	// TO-DO
-
 	// Precondición: @node es una instancia valida
 	// Postcondicion: Devuelve el Branch de @node
-
-	UGit::Branch* GetBranch(NodeBranchRegister* node)
-
-
+	UGit::Branch* GetBranch(NodeBranchRegister* node);
 
 	// Precondición: @node y @previuos son instancias validas
 	// Postcondición: Establace a @previous como el anterior a @nodo

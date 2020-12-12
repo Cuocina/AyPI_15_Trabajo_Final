@@ -82,3 +82,28 @@ UGit::NodeBranchRegister * UGit::GetNodeBranch(BranchRegister * branchregister, 
 	}
 	return result;
 }
+
+UGit::Branch * UGit::GetBranch(NodeBranchRegister * node)
+{
+	return node->item;
+}
+
+void UGit::ChangePrevious(NodeBranchRegister * node, NodeBranchRegister * previous)
+{
+	node->previous = previous;
+}
+
+void UGit::ChangeNext(NodeBranchRegister * node, NodeBranchRegister * next)
+{
+	node->next = next;
+}
+
+NodeBranchRegister * UGit::GetPrevious(NodeBranchRegister * node)
+{
+	return node->previous;
+}
+
+NodeBranchRegister * UGit::GetNext(NodeBranchRegister * node)
+{
+	return node->next;
+}
