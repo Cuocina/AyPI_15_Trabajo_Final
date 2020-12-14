@@ -3,11 +3,11 @@
 
 #include "Commit.h"
 
-namespace UGit{
+namespace UGit {
 	struct CommitBag;
 	CommitBag* CreateBag();
-	void Add(CommitBag* bag, UGit::Commit* commit);
-	// Función auxliciar agregada
+	void Add(CommitBag* bag, void* commit);
+	// Función auxiliar agregada
 
 	// Precondición: @bag y @commitsFrom son instancias válidas
 	// Postcondición: Agrega los @cantidad ultimos comits de @bagFrom a @bag

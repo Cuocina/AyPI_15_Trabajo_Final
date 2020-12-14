@@ -1,7 +1,7 @@
 #include "Branch.h"
-#include <string>
 
 using namespace UGit;
+
 
 struct UGit::Branch {
 	string name;
@@ -19,7 +19,12 @@ Branch * UGit::CreateBranch(string name, Commit * commit)
 
 string UGit::GetName(const Branch * branch)
 {
-	return branch->name;
+	if (branch != NULL) {
+		return branch->name;
+	}
+	else {
+		return NULL;
+	}
 }
 
 Commit * UGit::GetLastCommit(const Branch * branch)

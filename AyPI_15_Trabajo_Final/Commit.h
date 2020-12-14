@@ -9,7 +9,7 @@ using std::string;
 using UDateTime::DateTime;
 using UUser::User;
 
-namespace UGit{
+namespace UGit {
 	struct Commit;
 
 	// Precondicion: Ninguna
@@ -19,11 +19,10 @@ namespace UGit{
 	// - Un HashCode que por ahora sera simplemente un codigo alfanumerico de 40 caracteres randoms, los caracteres deben estar en minusculas
 	// - Una fecha y hora actual del momento de creacion obtenida de Context.h
 	// - El usuario que se encuentra en el contexto de la operacion obtenido de Context.h
-	Commit* CreateCommit(Commit* parent, string message);
-
 	// Precondicion: @parents es una instancia valida de CommitBag
 	// Postcondicion: Igual a la primitiva anterior pero establece varios parents en lugar de uno solo
 	Commit* CreateCommit(void* parents, string message);
+
 
 	// Precondicion: @commit es una intancia valida
 	// Postcondicion: Devuelve la fecha y hora de creacion del @commit

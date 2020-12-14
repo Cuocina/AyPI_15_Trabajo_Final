@@ -1,30 +1,35 @@
 #include "BranchRegister.h"
 #include "Branch.h"
 #include <iostream>
+#include <string.h>
 
 using namespace UGit;
 using namespace std;
 
-struct UGit::NodeBranchRegister{
-	UGit::Branch* item;					
+struct UGit::NodeBranchRegister {
+	UGit::Branch* item;
 	UGit::NodeBranchRegister* next;
 	UGit::NodeBranchRegister* previous;
 };
 
-struct UGit::BranchRegister{
+struct UGit::BranchRegister {
 	UGit::NodeBranchRegister* first;
 };
 
-UGit::BranchRegister* uniqueInstance = UGit::GetBranchRegister();
+// Funciones Auxiliares:
+UGit::BranchRegister* CreateBranchRegister();
 
-UGit::BranchRegister * UGit::GetBranchRegister()
-{
-	if (uniqueInstance->first != NULL) {
-		BranchRegister* uniqueInstance = new BranchRegister;
-		uniqueInstance->first = NULL;
-	}
+// Instancia Única:
+UGit::BranchRegister* uniqueInstance = CreateBranchRegister();
 
+UGit::BranchRegister * UGit::GetBranchRegister() {
 	return uniqueInstance;
+}
+
+UGit::BranchRegister* CreateBranchRegister() {
+	UGit::BranchRegister* branchRegister = new UGit::BranchRegister;
+	branchRegister->first = CreateNodeBranchRegister(UGit::CreateBranch("",NULL),NULL,NULL);
+	return branchRegister;
 }
 
 UGit::NodeBranchRegister* UGit::CreateNodeBranchRegister(UGit::Branch* branch, NodeBranchRegister* next, NodeBranchRegister* previous) {
@@ -32,17 +37,15 @@ UGit::NodeBranchRegister* UGit::CreateNodeBranchRegister(UGit::Branch* branch, N
 	nodo->item = branch;
 	nodo->next = next;
 	nodo->previous = previous;
-
 	return nodo;
 }
 
 void UGit::AddBranch(BranchRegister * branchRegister, Branch * branch)
 {
-	UGit::NodeBranchRegister* newLastestNode = CreateNodeBranchRegister(branch, NULL,NULL);
+	NodeBranchRegister* lastestNode = GetLastestNode(branchRegister);
+	UGit::NodeBranchRegister* newLastestNode = CreateNodeBranchRegister(branch, NULL, lastestNode);
 	if (!IsTheBranch(branchRegister, branch)) {
-		NodeBranchRegister* lastestNode = GetLastestNode(branchRegister);
 		lastestNode->next = newLastestNode;
-		newLastestNode->previous = lastestNode;
 	}
 }
 
@@ -52,31 +55,31 @@ UGit::NodeBranchRegister * UGit::GetLastestNode(BranchRegister * branchRegister)
 	while (iterator->next != NULL) {
 		iterator = iterator->next;
 	}
-
 	return iterator;
 }
 
 bool UGit::IsTheBranch(BranchRegister * branchRegister, Branch * branch)
 {
 	NodeBranchRegister* iterator = branchRegister->first;
-	bool result = false;
-	while (iterator->next != NULL) {
-		result = iterator->item == branch ? true : result;
+	bool isTheBranch = false;
+	while (iterator->next != NULL && !isTheBranch) {
+		isTheBranch = iterator->item == branch ? true : isTheBranch;
 		iterator = iterator->next;
 	}
-
-	return result;
+	return isTheBranch;
 }
 
-UGit::NodeBranchRegister * UGit::GetNodeBranch(BranchRegister * branchregister, string name)
+UGit::NodeBranchRegister * UGit::GetNodeBranch(BranchRegister * branchRegister, string name)
 {
-	UGit::NodeBranchRegister* iterator = branchregister->first;
-	UGit::NodeBranchRegister* result = NULL;
+	UGit::NodeBranchRegister* iterator = branchRegister->first;
+	UGit::NodeBranchRegister* result = CreateNodeBranchRegister(NULL,NULL,NULL);
 	while (iterator->next != NULL) {
 		if (GetName(iterator->item) == name) {
 			result->item = iterator->item;
 			result->next = iterator->next;
 			result->previous = iterator->previous;
+			//salida
+			iterator->next = NULL;
 		}
 		iterator = iterator->next;
 	}

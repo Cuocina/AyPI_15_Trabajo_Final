@@ -35,7 +35,7 @@ namespace UGit {
 	// Precondición: @branchregister debe ser una instancia válida 
 	// Precondición:: @name debe ser el nombre de un branch existencia
 	// Postcondición: Devuelve el NodeBranchRegister que contenga un branch con @name
-	NodeBranchRegister* GetNodeBranch(BranchRegister * branchregister, string name);
+	NodeBranchRegister* GetNodeBranch(BranchRegister * branchRegister, string name);
 
 	// Precondición: @node es una instancia valida
 	// Postcondicion: Devuelve el Branch de @node

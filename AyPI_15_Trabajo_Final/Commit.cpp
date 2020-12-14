@@ -21,6 +21,7 @@ struct UGit::Commit {
 	UUser::User* user;
 };
 
+
 //Funciones auxiliares
 
 bool RandomSecuencyInitialized = false;
@@ -38,9 +39,9 @@ string CreateHashCode() {
 	return hashCode;
 }
 
-UGit::Commit* UGit::CreateCommit(UGit::Commit* parent, string message) {
+UGit::Commit* UGit::CreateCommit(void* parents, string message) {
 	UGit::Commit* commit = new UGit::Commit;
-	commit->parent = parent;
+	commit->parent = (UGit::Commit*)parents;
 	commit->message = message;
 	commit->hashCode = CreateHashCode();
 	commit->context = UContext::GetNow();

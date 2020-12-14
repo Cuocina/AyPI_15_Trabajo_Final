@@ -100,7 +100,7 @@ void AddHotFixes(UGit::Git* git, string branchName) {
 	}
 }
 
-void CollectCommit(UGit::Commit* commit) {
+void CollectCommit(void* commit) {
 	if (commit != NULL) {
 		UGit::Add(garbageCollector, commit);
 	}
