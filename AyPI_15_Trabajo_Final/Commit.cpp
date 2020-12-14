@@ -81,6 +81,8 @@ string UGit::GetShortHashCode(const Commit* commit) {
 }
 
 void UGit::DestroyCommit(Commit* commit) {
-	DestroyDateTime(commit->context);
-	delete commit;
+	if (commit != NULL) {
+		DestroyDateTime(commit->context);
+		delete commit;
+	}
 }

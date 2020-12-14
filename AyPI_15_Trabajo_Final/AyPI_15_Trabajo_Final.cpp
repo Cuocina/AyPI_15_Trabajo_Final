@@ -35,6 +35,8 @@ int main() {
 	UGit::DestroyBranch(head);
 	UGit::Destroy(git);
 	FreeGarbageCollector();
+	string pausa;
+	std::cin >> pausa;
 	return 0;
 }
 

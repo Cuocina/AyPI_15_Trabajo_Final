@@ -1,7 +1,10 @@
 #include "CommitBag.h"
 #include "Commit.h"
+#include <iostream>
 
 using namespace UGit::UCommitBagIterator;
+using namespace std;
+
 
 struct UGit::CommitBag {
 	UCommitBagIterator::CommitBagIterator* first;
@@ -23,8 +26,10 @@ void UGit::Add(CommitBag * bag, void* commit)
 {
 	UCommitBagIterator::CommitBagIterator* iterator = Begin(bag);
 	UCommitBagIterator::CommitBagIterator* newLastetCommit = UCommitBagIterator::CreateIterator((UGit::Commit*)commit);
-	while (!UCommitBagIterator::IsEnd(iterator))
-		UCommitBagIterator::Next(iterator);
+	while (!UCommitBagIterator::IsEnd(iterator)) {
+		//UCommitBagIterator::Next(iterator);
+		iterator = iterator->next;
+	}
 	iterator->next = newLastetCommit;
 }
 
