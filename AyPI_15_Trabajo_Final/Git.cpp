@@ -122,12 +122,6 @@ void UGit::DeleteBranch(Git * git, string branchName) {
 	}
 }
 
-/*
- * Precondicion: @git es una instancia valida
- * Postcondicion: Si @branchName existe en la register de branch crea un nuevo commit con mensaje @message y que tiene como parent el ultimo commit del branch
- * Si @branchName no existe no realiza ninguna accion y devuelve NULL
- * Si el commit es creado esta funcion tambien debe invocar todos los Hook asociados al evento NewCommitAdded pasando como parametro el commit creado. El orden de invocacion debe ser FIFO
- */
 Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	UGit::Commit* newCommit = NULL;
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
@@ -138,7 +132,17 @@ Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	}
 	return newCommit;
 }
+
+/*
+	 * Precondicion: @git @from y @to son instancias validas
+	 * Postcondicion: Si @from y @to tienen como ultimo commit el mismo commit no realiza ninguna accion
+	 * Si @from y @to tienen distintos commits entonces realiza las siguinetes acciones
+	 * - Crea una nuevo commit que tiene como padre los dos ultimos commit de @from y @to y como mensaje "branch [nombre branch @from] merged on [nombre branch @to]"
+	 * - Establece como ultimo commit en @to el commit creado
+	 * - Invoca todos los Hook asociados al evento NewCommitAdded pasando como parametro el commit creado. El orden de invocacion debe ser FIFO
+	 */
 void UGit::Merge(Git* git, Branch* from, Branch* to) {
+	cout << "llego a la función merge" << endl;
 	if (UGit::GetLastCommit(from) != UGit::GetLastCommit(to)) {
 		UGit::CommitBag* parents = UGit::CreateBag();
 		UGit::Add(parents, UGit::GetLastCommit(from));
