@@ -17,7 +17,7 @@ namespace UGit {
 		struct CommitBagIterator;
 		CommitBagIterator* CreateIterator(UGit::Commit* commit);
 		CommitBagIterator* Begin(CommitBag* bag);
-		void Next(const CommitBagIterator* iterator);
+		CommitBagIterator* Next(const CommitBagIterator* iterator);
 		bool IsEnd(const CommitBagIterator* iterator);
 		Commit* GetCommit(CommitBagIterator* iterator);
 		void DestroyIterator(CommitBagIterator* commit);

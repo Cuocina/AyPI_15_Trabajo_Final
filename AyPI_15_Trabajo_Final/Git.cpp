@@ -123,31 +123,24 @@ void UGit::DeleteBranch(Git * git, string branchName) {
 }
 
 Commit* UGit::NewCommit(Git* git, string branchName, string message) {
-	UGit::Commit* newCommit = NULL;
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
 	if (UGit::IsTheBranch(branchRegister, UGit::GetBranch(UGit::GetNodeBranch(branchRegister, branchName)))) {
-		newCommit = UGit::CreateCommit(UGit::GetLastCommit(UGit::GetBranch(UGit::GetNodeBranch(branchRegister, branchName))), message);
+		UGit::Commit* newCommit  = UGit::CreateCommit(UGit::GetLastCommit(UGit::GetBranch(UGit::GetNodeBranch(branchRegister, branchName))), message);
+		UGit::SetLastCommit(UGit::GetBranch(UGit::GetNodeBranch(branchRegister, branchName)), newCommit);
 		RunHooks(git->gitEventsCommit, newCommit);
-
+		return newCommit;
 	}
-	return newCommit;
+	else {
+		return NULL;
+	}
 }
 
-/*
-	 * Precondicion: @git @from y @to son instancias validas
-	 * Postcondicion: Si @from y @to tienen como ultimo commit el mismo commit no realiza ninguna accion
-	 * Si @from y @to tienen distintos commits entonces realiza las siguinetes acciones
-	 * - Crea una nuevo commit que tiene como padre los dos ultimos commit de @from y @to y como mensaje "branch [nombre branch @from] merged on [nombre branch @to]"
-	 * - Establece como ultimo commit en @to el commit creado
-	 * - Invoca todos los Hook asociados al evento NewCommitAdded pasando como parametro el commit creado. El orden de invocacion debe ser FIFO
-	 */
 void UGit::Merge(Git* git, Branch* from, Branch* to) {
-	cout << "llego a la función merge" << endl;
 	if (UGit::GetLastCommit(from) != UGit::GetLastCommit(to)) {
 		UGit::CommitBag* parents = UGit::CreateBag();
 		UGit::Add(parents, UGit::GetLastCommit(from));
 		UGit::Add(parents, UGit::GetLastCommit(to));
-		UGit::Commit* newCommit = UGit::CreateCommit(parents, "branch" + UGit::GetName(from) + "merge on" + UGit::GetName(to));
+		UGit::Commit* newCommit = UGit::CreateCommit(parents, "branch " + UGit::GetName(from) + " merge on " + UGit::GetName(to));
 		UGit::SetLastCommit(to, newCommit);
 
 		RunHooks(git->gitEventsCommit, newCommit);

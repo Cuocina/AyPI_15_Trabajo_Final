@@ -31,12 +31,10 @@ int main() {
 	AddHotFixes(git, "master");
 	AddAllDeveloperFeatureChanges(git, Features, 3);
 	PrepareRelease(git, head, featureBranches, 3);
-
 	UGit::DestroyBranch(head);
 	UGit::Destroy(git);
 	FreeGarbageCollector();
-	string pausa;
-	std::cin >> pausa;
+
 	return 0;
 }
 
@@ -114,7 +112,7 @@ void FreeGarbageCollector() {
 		while (!UGit::UCommitBagIterator::IsEnd(iterator)) {
 			Commit* commit = UGit::UCommitBagIterator::GetCommit(iterator);
 			UGit::DestroyCommit(commit);
-			UGit::UCommitBagIterator::Next(iterator);
+			iterator=UGit::UCommitBagIterator::Next(iterator);
 		}
 		UGit::UCommitBagIterator::DestroyIterator(iterator);
 		UGit::DestroyBag(garbageCollector);

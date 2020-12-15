@@ -79,12 +79,8 @@ UGit::NodeBranchRegister * UGit::GetNodeBranch(BranchRegister * branchRegister, 
 			result->item = iterator->item;
 			result->next = iterator->next;
 			result->previous = iterator->previous;
-			//salida
-			iterator->next = NULL;
 		}
-		else {
-			iterator = iterator->next;
-		}
+		iterator = iterator->next;
 	}
 	if (GetName(iterator->item) == name) {
 		result->item = iterator->item;

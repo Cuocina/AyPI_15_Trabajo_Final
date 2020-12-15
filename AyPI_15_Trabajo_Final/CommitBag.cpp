@@ -70,8 +70,8 @@ UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::Begin(UGi
 	return bag->first;
 }
 
-void UGit::UCommitBagIterator::Next(const CommitBagIterator * iterator) {
-	iterator = iterator->next;
+CommitBagIterator* UGit::UCommitBagIterator::Next(const CommitBagIterator * iterator) {
+	return iterator->next;
 }
 
 bool UGit::UCommitBagIterator::IsEnd(const CommitBagIterator * iterator) {
