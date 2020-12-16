@@ -17,14 +17,8 @@ Branch * UGit::CreateBranch(string name, Commit * commit)
 	return Branch;
 }
 
-string UGit::GetName(const Branch * branch)
-{
-	if (branch != NULL) {
-		return branch->name;
-	}
-	else {
-		return NULL;
-	}
+string UGit::GetName(const Branch * branch){
+	return branch != NULL ? branch->name : NULL;
 }
 
 Commit * UGit::GetLastCommit(const Branch * branch)

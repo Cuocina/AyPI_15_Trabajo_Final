@@ -66,8 +66,8 @@ bool UGit::IsTheBranch(BranchRegister * branchRegister, Branch * branch)
 		isTheBranch = iterator->item == branch ? true : isTheBranch;
 		iterator = iterator->next;
 	}
-	isTheBranch = iterator->item == branch ? true : isTheBranch;
-	return isTheBranch;
+	
+	return iterator->item == branch ? true : isTheBranch;
 }
 
 UGit::NodeBranchRegister * UGit::GetNodeBranch(BranchRegister * branchRegister, string name)
