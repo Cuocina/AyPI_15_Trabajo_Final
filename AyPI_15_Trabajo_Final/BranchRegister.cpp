@@ -3,19 +3,17 @@
 
 using namespace UGit;
 
-struct UGit::BranchRegister {
-	NodeBranchRegister* first;
-};
-
 // Estructuras Auxiliares:
-struct NodeBranchRegister{
+struct NodeBranchRegister {
 	string branchName;		// key
 	UGit::Branch* branch;	// value
 	NodeBranchRegister* next;
 };
 
-// Instancia Única:
-UGit::BranchRegister* uniqueInstance = CreateBranchRegister();
+// Estructuras:
+struct UGit::BranchRegister {
+	NodeBranchRegister* first;
+};
 
 // Funciones Auxiliares:
 UGit::BranchRegister* CreateBranchRegister() {
@@ -52,6 +50,10 @@ NodeBranchRegister* GetNode(BranchRegister* branchRegister, string branchName) {
 		return NULL;
 	}
 }
+
+// Instancia Única:
+UGit::BranchRegister* uniqueInstance = CreateBranchRegister();
+
 // Implementaciones:
 UGit::BranchRegister * UGit::GetBranchRegister() {
 	return uniqueInstance;

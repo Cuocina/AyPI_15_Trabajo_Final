@@ -90,8 +90,18 @@ void UGit::AddHook(Git* git, GitEvent event, Hook hook) {
 
 Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
+	if (!UGit::Contains(branchRegister, branchName)) {
+		UGit::Branch* newBranch = baseBranch == NULL ? UGit::CreateBranch(branchName, NULL) : UGit::CreateBranch(branchName, UGit::GetLastCommit(baseBranch));
+		UGit::Add(branchRegister, newBranch);
+		RunHooks(git->gitEventsBranch, newBranch);
+		return newBranch;
+	}
+}
+
+/*Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
+	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
 	UGit::Branch* branch = UGit::CreateBranch(branchName, NULL);
-	if (!UGit::Contains(branchRegister, branch)) {
+	if (!UGit::Contains(branchRegister, branchName)) {
 		if (baseBranch == NULL) {
 			UGit::SetLastCommit(branch, NULL);
 		}
@@ -106,7 +116,7 @@ Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
 		UGit::DestroyBranch(branch);
 		return NULL;
 	}
-}
+}*/
 
 void UGit::DeleteBranch(Git * git, string branchName) {/*
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
@@ -124,7 +134,7 @@ void UGit::DeleteBranch(Git * git, string branchName) {/*
 
 Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
-	if (UGit::Contains(branchRegister, UGit::Get(branchRegister, branchName))) {
+	if (UGit::Contains(branchRegister, branchName)) {
 		UGit::Commit* newCommit = UGit::CreateCommit(UGit::GetLastCommit(UGit::Get(branchRegister, branchName)), message);
 		UGit::SetLastCommit(UGit::Get(branchRegister, branchName), newCommit);
 		RunHooks(git->gitEventsCommit, newCommit);
