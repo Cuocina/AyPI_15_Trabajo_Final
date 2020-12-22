@@ -21,6 +21,14 @@ struct UGit::UCommitBagIterator::CommitBagIterator {
 //funciones auxiliares
 UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag);
 
+CommitBagNode* CreateNode() {
+	CommitBagNode* node = new CommitBagNode;
+	node->item = NULL;
+	node->next = NULL;
+
+	return node;
+}
+
 UGit::CommitBag* UGit::CreateBag() {
 	UGit::CommitBag* commitBag = new UGit::CommitBag;
 	commitBag->first = NULL;
@@ -29,10 +37,16 @@ UGit::CommitBag* UGit::CreateBag() {
 
 UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag) {
 	UGit::UCommitBagIterator::CommitBagIterator* iterator = Begin(bag);
-	while (!IsEnd(iterator)) {
-		iterator = Next(iterator);
+	if (iterator != NULL) {
+		while (!IsEnd(iterator)) {
+			iterator = Next(iterator);
+		}
+		return iterator;
 	}
-	return iterator;
+	else {
+		return iterator = CreateIterator(NULL);
+	}
+	
 }
 void UGit::Add(UGit::CommitBag * bag, void* commit) {
 	UGit::UCommitBagIterator::CommitBagIterator* iterator = GetLatestCommit(bag);
@@ -71,6 +85,7 @@ void UGit::DestroyBag(CommitBag * bag) {
 
 UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::CreateIterator(UGit::Commit* commit) {
 	UGit::UCommitBagIterator::CommitBagIterator* commitBagIterator = new UGit::UCommitBagIterator::CommitBagIterator;
+	commitBagIterator->node = CreateNode();
 	commitBagIterator->node->item = commit;
 	commitBagIterator->node->next = NULL;
 	return commitBagIterator;
@@ -85,7 +100,7 @@ UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::Next(cons
 }
 
 bool UGit::UCommitBagIterator::IsEnd(const CommitBagIterator * iterator) {
-	return iterator == NULL;
+	return iterator!=NULL?iterator->node->next == NULL:true;
 }
 
 UGit::Commit * UGit::UCommitBagIterator::GetCommit(CommitBagIterator * iterator) {
@@ -93,8 +108,8 @@ UGit::Commit * UGit::UCommitBagIterator::GetCommit(CommitBagIterator * iterator)
 }
 
 void UGit::UCommitBagIterator::DestroyIterator(CommitBagIterator * iterator) {
-	if (iterator->node != NULL) {
+	if (iterator != NULL) {
+		delete iterator->node;
 		delete iterator;
-		iterator->node = NULL;
 	}
 }

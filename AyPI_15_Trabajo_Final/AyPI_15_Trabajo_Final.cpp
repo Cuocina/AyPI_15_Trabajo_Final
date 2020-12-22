@@ -35,6 +35,8 @@ int main() {
 	UGit::Destroy(git);
 	FreeGarbageCollector();
 
+	system("PAUSE()");
+
 	return 0;
 }
 

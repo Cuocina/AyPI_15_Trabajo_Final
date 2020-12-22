@@ -37,18 +37,24 @@ NodeBranchRegister* CreateNodeBranchRegister(string branchName, UGit::Branch* br
 
 NodeBranchRegister* GetNode(BranchRegister* branchRegister, string branchName) {
 	NodeBranchRegister* iterator = Begin(branchRegister);
-	while (!iterator->next != NULL) {
+	if (iterator != NULL) {
+		while (iterator->next != NULL) {
+			if (iterator->branchName == branchName) {
+				return iterator;
+			}
+			iterator = iterator->next;
+		}
 		if (iterator->branchName == branchName) {
 			return iterator;
 		}
-		iterator = iterator->next;
-	}
-	if (iterator->branchName == branchName) {
-		return iterator;
+		else {
+			return NULL;
+		}
 	}
 	else {
 		return NULL;
 	}
+	
 }
 
 // Instancia Única:
@@ -59,13 +65,25 @@ UGit::BranchRegister * UGit::GetBranchRegister() {
 	return uniqueInstance;
 }
 
-UGit::Branch* UGit::Get(UGit::BranchRegister* branchRegister, string branchName) {
-	return GetNode(branchRegister, branchName)->branch;
+UGit::Branch* UGit::Get(BranchRegister* branchRegister, string branchName) {
+	Branch* branch = NULL;
+	NodeBranchRegister* node = Begin(branchRegister);
+	while (node->next!=NULL) {
+		if (node->branchName == branchName) {
+			branch = node->branch;
+		}
+		node = node->next;
+	}
+	if (node->branchName == branchName) {
+		branch = node->branch;
+	}
+
+	return branch;
 }
 
 void UGit::Add(BranchRegister * branchRegister, UGit::Branch * branch){
 	if (!Contains(branchRegister, UGit::GetName(branch)))
-		CreateNodeBranchRegister(UGit::GetName(branch), branch, Begin(branchRegister));
+		branchRegister->first=CreateNodeBranchRegister(UGit::GetName(branch), branch, Begin(branchRegister));
 }
 
 void UGit::Remove(BranchRegister * branchRegister, string branch){
