@@ -12,7 +12,7 @@ using std::string;
 using namespace std;
 
 
-// Estructuras Auxiliares
+// Estructuras Auxiliares:
 struct NodoHook {
 	UGit::Hook hook;
 	NodoHook* next;
@@ -23,25 +23,13 @@ struct ListaHooks {
 	NodoHook* first;
 };
 
+// Estructuras:
 struct UGit::Git {
 	ListaHooks* gitEventsBranch;
 	ListaHooks* gitEventsCommit;
 };
 
-
-// Funciones auxiliares
-ListaHooks* CreateGitEvents();
-NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next);
-void AddEvents(ListaHooks* gitEvents, Hook hook);
-void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch);
-void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit);
-
-Git* UGit::CreateGit() {
-	UGit::Git* git = new UGit::Git;
-	git->gitEventsBranch = CreateGitEvents();
-	git->gitEventsCommit = CreateGitEvents();
-	return git;
-}
+// Funciones auxiliares:
 ListaHooks* CreateGitEvents() {
 	ListaHooks* newEvent = new ListaHooks;
 	newEvent->first = NULL;
@@ -54,6 +42,7 @@ NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next) {
 	event->next = next;
 	return event;
 }
+
 NodoHook* GetLastestEventBranch(UGit::Git* git) {
 	NodoHook* iterator = git->gitEventsBranch->first;
 	while (iterator->next != NULL) {
@@ -84,13 +73,32 @@ void AddEvents(ListaHooks* gitEvents, Hook hook) {
 	}
 }
 
-void UGit::AddHook(Git* git, GitEvent event, Hook hook) {
-	if (event == NewBranchCreated) {
-		AddEvents(git->gitEventsBranch, hook);
+void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch) {
+	NodoHook* iterator = gitEvents->first;
+	while (iterator->next != NULL) {
+		if (iterator->hook != NULL)
+			iterator->hook(branch);
+		iterator = iterator->next;
+	};
+	iterator->hook(branch);
+}
+
+void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit) {
+	NodoHook* iterator = gitEvents->first;
+	while (iterator->next != NULL) {
+		if (iterator->hook != NULL)
+			iterator->hook(commit);
+		iterator = iterator->next;
+		iterator->hook(commit);
 	}
-	else {
-		AddEvents(git->gitEventsCommit, hook);
-	}
+}
+
+// Implementaciones: 
+Git* UGit::CreateGit() {
+	UGit::Git* git = new UGit::Git;
+	git->gitEventsBranch = CreateGitEvents();
+	git->gitEventsCommit = CreateGitEvents();
+	return git;
 }
 
 Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
@@ -101,10 +109,6 @@ Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
 		RunHooks(git->gitEventsBranch, newBranch);
 		return newBranch;
 	}
-}
-
-// Implementar: 
-void UGit::DeleteBranch(Git * git, string branchName) {
 }
 
 Commit* UGit::NewCommit(Git* git, string branchName, string message) {
@@ -120,30 +124,14 @@ Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	}
 }
 
-void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit) {
-	NodoHook* iterator = gitEvents->first;
-	while (iterator->next != NULL) {
-		if (iterator->hook != NULL)
-			iterator->hook(commit);
-		iterator = iterator->next;
-		iterator->hook(commit);
+void UGit::AddHook(Git* git, GitEvent event, Hook hook) {
+	if (event == NewBranchCreated) {
+		AddEvents(git->gitEventsBranch, hook);
+	}
+	else {
+		AddEvents(git->gitEventsCommit, hook);
 	}
 }
-
-	void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch) {
-		NodoHook* iterator = gitEvents->first;
-		while (iterator->next != NULL) {
-			if (iterator->hook != NULL)
-				iterator->hook(branch);
-			iterator = iterator->next;
-		};
-		iterator->hook(branch);
-	}
-
-	void UGit::Destroy(Git * git) {
-		delete git;
-	}
-
 
 void UGit::Merge(Git* git, Branch* from, Branch* to) {
 	if (UGit::GetLastCommit(from) != UGit::GetLastCommit(to)) {
@@ -155,4 +143,25 @@ void UGit::Merge(Git* git, Branch* from, Branch* to) {
 
 		RunHooks(git->gitEventsCommit, newCommit);
 	}
+}
+
+// Destroys:
+// Implementar: 
+void UGit::DeleteBranch(Git * git, string branchName) {
+}
+
+void DestroyListaHook(ListaHooks* list) {
+	while (list->first->next != NULL) {
+		NodoHook* toDelete = list->first;
+		list->first = list->first->next;
+		delete toDelete;
+	}
+	delete list->first;
+	delete list;
+}
+
+void UGit::Destroy(Git * git) {
+	DestroyListaHook(git->gitEventsBranch);
+	DestroyListaHook(git->gitEventsCommit);
+	delete git;
 }
