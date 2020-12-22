@@ -112,7 +112,7 @@ void FreeGarbageCollector() {
 		while (!UGit::UCommitBagIterator::IsEnd(iterator)) {
 			Commit* commit = UGit::UCommitBagIterator::GetCommit(iterator);
 			UGit::DestroyCommit(commit);
-			iterator=UGit::UCommitBagIterator::Next(iterator);
+			iterator = UGit::UCommitBagIterator::Next(iterator);
 		}
 		UGit::UCommitBagIterator::DestroyIterator(iterator);
 		UGit::DestroyBag(garbageCollector);

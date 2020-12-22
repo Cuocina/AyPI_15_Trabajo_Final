@@ -7,55 +7,34 @@ using namespace UGit;
 
 namespace UGit {
 
+	// Dictionary:
 	struct BranchRegister;
-	struct NodeBranchRegister;
 
-	// Precondicion: @branch es una instancia válida
-	// Postcondición: Devuelve una instancia unica de BranchRegister. Si no existe, la crea a partir de @branch.
+	// Precondicion: 
+	// Postcondición: Devuelve una instancia unica de BranchRegister. 
 	BranchRegister* GetBranchRegister();
 
 
-	// Precondición: @branch y @branchregister son instancias validas
-	// Postcondición: Devuelve una instancia válida
-	NodeBranchRegister* CreateNodeBranchRegister(UGit::Branch* branch, NodeBranchRegister* siguiente, NodeBranchRegister* anterior);
+	// Precondición: @branchName es una instancia valida
+	// Postcondicion: Devuelve el Branch de @branchName
+	UGit::Branch* Get(BranchRegister* branchRegister, string branchName);
 
-	// Precondición: @branchregister y @branch son instancias validas
+	// Precondición: @branchregister @branch son instancias validas
 	// Postcondición: Si @branch no existe en @branchregister lo agrega
-	void AddBranch(BranchRegister* branchRegister, Branch* branch);
+	void Add(BranchRegister* branchRegister, UGit::Branch* branch);
 
+	// Precondición:@branch es una instancia valida
+	// Postcondicion: Si el branch existe en @branchregister lo quita
+	void Remove(BranchRegister* branchRegister, string branchName);
 
-	// Precondición: @branchRegister es una instancia valida
-	// Postcondición: Devuelve el último nodo de @branchRegister
-	NodeBranchRegister* GetLastestNode(BranchRegister* branchRegister);
+	// Precondición:@branchregister y @branchName son instancias validas
+	// Postcondicion: Devuelve true si existe un branch con @branchName en @branchregister
+	// de lo contrario devuelve false
+	bool Contains(BranchRegister* branchRegister, string branchName);
 
-	//Precondición: @branchregister y @branch son instancias validas
-	//Postcondición: Devuelve true si @branch se encuentra en @branchregister
-	bool IsTheBranch(BranchRegister* branchRegister, Branch* branch);
-
-	// Precondición: @branchregister debe ser una instancia válida 
-	// Precondición:: @name debe ser el nombre de un branch existencia
-	// Postcondición: Devuelve el NodeBranchRegister que contenga un branch con @name
-	NodeBranchRegister* GetNodeBranch(BranchRegister * branchRegister, string name);
-
-	// Precondición: @node es una instancia valida
-	// Postcondicion: Devuelve el Branch de @node
-	UGit::Branch* GetBranch(NodeBranchRegister* node);
-
-	// Precondición: @node y @previuos son instancias validas
-	// Postcondición: Establace a @previous como el anterior a @nodo
-	void ChangePrevious(NodeBranchRegister* node, NodeBranchRegister* previous);
-
-	// Precondición: @node y @next son instancias validas
-	// Postcondición: Establace a @next como el anterior a @nodo
-	void ChangeNext(NodeBranchRegister* node, NodeBranchRegister* next);
-
-	// Precondición: @node es una instancia valida
-	// Postcondición: Devuelve el anterior nodo a  @nodo
-	NodeBranchRegister* GetPrevious(NodeBranchRegister* node);
-
-	// Precondición: @node es una instancia valida
-	// Postcondición: Devuelve el siguiente nodo a  @nodo
-	NodeBranchRegister* GetNext(NodeBranchRegister* node);
+	// Precondición:@branchRegister es una intancia valida
+	// Postcondicion: Libera todos los recursos asociados de @branchRegister
+	void DestroyBranchRegister(BranchRegister* branchRegister);
 
 }
 

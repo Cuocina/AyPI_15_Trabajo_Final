@@ -1,117 +1,237 @@
 #include "BranchRegister.h"
 #include "Branch.h"
-#include <iostream>
-#include <string.h>
 
 using namespace UGit;
-using namespace std;
 
-struct UGit::NodeBranchRegister {
+struct UGit::BranchRegister {
+	NodeBranchRegister* first;
+};
+
+// Estructuras Auxiliares:
+struct NodeBranchRegister{
+	string branchName;		// key
+	UGit::Branch* branch;	// value
+	NodeBranchRegister* next;
+};
+
+// Instancia Única:
+UGit::BranchRegister* uniqueInstance = CreateBranchRegister();
+
+// Funciones Auxiliares:
+UGit::BranchRegister* CreateBranchRegister() {
+	UGit::BranchRegister* branchRegister = new UGit::BranchRegister;
+	branchRegister->first = NULL;
+	return branchRegister;
+}
+
+NodeBranchRegister* Begin(UGit::BranchRegister* branchRegister) {
+	return branchRegister->first;
+}
+
+NodeBranchRegister* CreateNodeBranchRegister(string branchName, UGit::Branch* branch, NodeBranchRegister* next) {
+	NodeBranchRegister* node = new NodeBranchRegister;
+	node->branch = branch;
+	node->branchName = branchName;
+	node->next = next;
+
+	return node;
+}
+
+NodeBranchRegister* GetNode(BranchRegister* branchRegister, string branchName) {
+	NodeBranchRegister* iterator = Begin(branchRegister);
+	while (!iterator->next != NULL) {
+		if (iterator->branchName == branchName) {
+			return iterator;
+		}
+		iterator = iterator->next;
+	}
+	if (iterator->branchName == branchName) {
+		return iterator;
+	}
+	else {
+		return NULL;
+	}
+}
+// Implementaciones:
+UGit::BranchRegister * UGit::GetBranchRegister() {
+	return uniqueInstance;
+}
+
+UGit::Branch* UGit::Get(UGit::BranchRegister* branchRegister, string branchName) {
+	return GetNode(branchRegister, branchName)->branch;
+}
+
+void UGit::Add(BranchRegister * branchRegister, UGit::Branch * branch){
+	if (!Contains(branchRegister, UGit::GetName(branch)))
+		CreateNodeBranchRegister(UGit::GetName(branch), branch, Begin(branchRegister));
+}
+
+void UGit::Remove(BranchRegister * branchRegister, string branch){
+	delete GetNode(branchRegister, branch);
+}
+
+bool UGit::Contains(BranchRegister * branchRegister, string branchName){
+	return GetNode(branchRegister, branchName) != NULL ? true : false;
+}
+
+void UGit::DestroyBranchRegister(BranchRegister * branchRegister){
+	NodeBranchRegister* iterator = Begin(branchRegister);
+	NodeBranchRegister* toDelete=NULL;
+	while (iterator->next != NULL) {
+		toDelete = iterator;
+		iterator = iterator->next;
+		delete toDelete;
+	}
+	toDelete = iterator;
+	iterator = iterator->next;
+	delete toDelete;
+	branchRegister->first = NULL;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+struct NodeBranchRegister {
 	UGit::Branch* item;
-	UGit::NodeBranchRegister* next;
-	UGit::NodeBranchRegister* previous;
+	BranchRegisterIterator* next;
+	BranchRegisterIterator* previous;
 };
 
 struct UGit::BranchRegister {
-	UGit::NodeBranchRegister* first;
+	BranchRegisterIterator* first;
+};
+
+struct BranchRegisterIterator {
+	NodeBranchRegister* node;
 };
 
 // Funciones Auxiliares:
 UGit::BranchRegister* CreateBranchRegister();
 
+// Funciones para Iterar:
+BranchRegisterIterator* CreateIterator(UGit::Branch* branch, BranchRegisterIterator* next, BranchRegisterIterator* previous);
+BranchRegisterIterator* Next(BranchRegisterIterator* iterator);
+BranchRegisterIterator* Begin(BranchRegister* branchRegister);
+bool IsEnd(BranchRegisterIterator* iterator);
+BranchRegisterIterator* GetPrevious(BranchRegisterIterator* iterator);
+BranchRegisterIterator* GetLastestNode(UGit::BranchRegister* branchRegister);
+
 // Instancia Única:
 UGit::BranchRegister* uniqueInstance = CreateBranchRegister();
 
-UGit::BranchRegister * UGit::GetBranchRegister() {
-	return uniqueInstance;
-}
-
+// Implementaciones Auxiliares:
 UGit::BranchRegister* CreateBranchRegister() {
 	UGit::BranchRegister* branchRegister = new UGit::BranchRegister;
-	branchRegister->first = CreateNodeBranchRegister(UGit::CreateBranch("",NULL),NULL,NULL);
+	branchRegister->first = NULL;
 	return branchRegister;
 }
 
-UGit::NodeBranchRegister* UGit::CreateNodeBranchRegister(UGit::Branch* branch, NodeBranchRegister* next, NodeBranchRegister* previous) {
-	UGit::NodeBranchRegister* nodo = new NodeBranchRegister;
-	nodo->item = branch;
-	nodo->next = next;
-	nodo->previous = previous;
-	return nodo;
+// Implementaciones Para Iterar:
+BranchRegisterIterator* CreateIterator(UGit::Branch* branch, BranchRegisterIterator* next, BranchRegisterIterator* previous) {
+	BranchRegisterIterator* iterator = new BranchRegisterIterator;
+	iterator->node->item = branch;
+	iterator->node->next = next;
+	iterator->node->previous = previous;
+	return iterator;
 }
 
-void UGit::AddBranch(BranchRegister * branchRegister, Branch * branch)
-{
-	NodeBranchRegister* lastestNode = GetLastestNode(branchRegister);
-	UGit::NodeBranchRegister* newLastestNode = CreateNodeBranchRegister(branch, NULL, lastestNode);
-	if (!IsTheBranch(branchRegister, branch)) {
-		lastestNode->next = newLastestNode;
-	}
+BranchRegisterIterator* Next(BranchRegisterIterator* iterator) {
+	return iterator->node->next;
 }
 
-UGit::NodeBranchRegister * UGit::GetLastestNode(BranchRegister * branchRegister)
-{
-	NodeBranchRegister* iterator = branchRegister->first;
-	while (iterator->next != NULL) {
-		iterator = iterator->next;
+BranchRegisterIterator* GetLastestNode(UGit::BranchRegister* branchRegister) {
+	BranchRegisterIterator* iterator = Begin(branchRegister);
+	while (!IsEnd(iterator)) {
+		iterator = Next(iterator);
 	}
 	return iterator;
 }
 
-bool UGit::IsTheBranch(BranchRegister * branchRegister, Branch * branch)
-{
-	NodeBranchRegister* iterator = branchRegister->first;
-	bool isTheBranch = false;
-	while (iterator->next != NULL && !isTheBranch) {
-		isTheBranch = iterator->item == branch ? true : isTheBranch;
-		iterator = iterator->next;
-	}
-	
-	return iterator->item == branch ? true : isTheBranch;
+// Implementeaciones:
+UGit::BranchRegister * UGit::GetBranchRegister() {
+	return uniqueInstance;
 }
 
-UGit::NodeBranchRegister * UGit::GetNodeBranch(BranchRegister * branchRegister, string name)
-{
-	UGit::NodeBranchRegister* iterator = branchRegister->first;
-	UGit::NodeBranchRegister* result = CreateNodeBranchRegister(NULL,NULL,NULL);
-	while (iterator->next != NULL) {
-		if (GetName(iterator->item) == name) {
-			result->item = iterator->item;
-			result->next = iterator->next;
-			result->previous = iterator->previous;
+void UGit::Add(BranchRegister* branchRegister, Branch* branch) {
+	if (!Contains(branchRegister, branch)) {
+		BranchRegisterIterator*	iteratorLastestNode = GetLastestNode(branchRegister);
+		iteratorLastestNode->node->next = CreateIterator(branch, NULL, iteratorLastestNode);
+	}
+}
+
+bool UGit::Contains(BranchRegister* branchRegister, Branch* branch) {
+	BranchRegisterIterator* iterator = Begin(branchRegister);
+	bool contains = false;
+	while (!IsEnd(iterator) && !contains) {
+		contains = iterator->node->item == branch ? true : contains;
+		iterator = Next(iterator);
+	}
+	return  iterator->node->item == branch ? true : contains;
+}
+
+UGit::Branch* UGit::Get(BranchRegister* branchRegister, string branchName) {
+	BranchRegisterIterator* iterator = Begin(branchRegister);
+	while (!IsEnd(iterator)) {
+		if (UGit::GetName(iterator->node->item) == branchName) {
+			return iterator->node->item;
 		}
-		iterator = iterator->next;
+		iterator = Next(iterator);
 	}
-	if (GetName(iterator->item) == name) {
-		result->item = iterator->item;
-		result->next = iterator->next;
-		result->previous = iterator->previous;
+}
+
+void UGit::Remove(BranchRegister* branchRegister, string branchName) {
+	UGit::Branch* branch = Get(branchRegister, branchName);
+	if (Contains(branchRegister, branch)) {
+		branch = NULL; //que seria quitarlo???
 	}
-	
-	return result;
 }
 
-UGit::Branch * UGit::GetBranch(NodeBranchRegister * node)
-{
-	return node->item;
+BranchRegisterIterator* Begin(BranchRegister* branchRegister) {
+	return branchRegister->first;
 }
 
-void UGit::ChangePrevious(NodeBranchRegister * node, NodeBranchRegister * previous)
-{
-	node->previous = previous;
+bool IsEnd(BranchRegisterIterator* iterator) {
+	return iterator == NULL;
 }
 
-void UGit::ChangeNext(NodeBranchRegister * node, NodeBranchRegister * next)
-{
-	node->next = next;
+BranchRegisterIterator* GetPrevious(BranchRegisterIterator* iterator) {
+	return iterator->node->previous;
 }
-
-NodeBranchRegister * UGit::GetPrevious(NodeBranchRegister * node)
-{
-	return node->previous;
-}
-
-NodeBranchRegister * UGit::GetNext(NodeBranchRegister * node)
-{
-	return node->next;
-}
+void UGit::DestroyBranchRegister(BranchRegister* branchRegister) {
+	BranchRegisterIterator* iterator = Begin(branchRegister);
+	if (iterator != NULL) {
+		delete iterator->node;
+		iterator->node = NULL;
+		iterator = Next(iterator);
+	}
+	delete branchRegister;
+}*/

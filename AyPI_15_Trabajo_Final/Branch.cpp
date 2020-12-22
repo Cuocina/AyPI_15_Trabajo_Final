@@ -17,7 +17,7 @@ Branch * UGit::CreateBranch(string name, Commit * commit)
 	return Branch;
 }
 
-string UGit::GetName(const Branch * branch){
+string UGit::GetName(const Branch * branch) {
 	return branch != NULL ? branch->name : NULL;
 }
 

@@ -20,7 +20,7 @@ namespace UGit {
 		CommitBagIterator* Next(const CommitBagIterator* iterator);
 		bool IsEnd(const CommitBagIterator* iterator);
 		Commit* GetCommit(CommitBagIterator* iterator);
-		void DestroyIterator(CommitBagIterator* commit);
+		void DestroyIterator(CommitBagIterator* iterator);
 	}
 	void DestroyBag(CommitBag* bag);
 }
