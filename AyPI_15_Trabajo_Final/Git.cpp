@@ -146,8 +146,8 @@ void UGit::Merge(Git* git, Branch* from, Branch* to) {
 }
 
 // Destroys:
-// Implementar: 
 void UGit::DeleteBranch(Git * git, string branchName) {
+	UGit::Remove(UGit::GetBranchRegister(), branchName);
 }
 
 void DestroyListaHook(ListaHooks* list) {

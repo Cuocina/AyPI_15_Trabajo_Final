@@ -87,7 +87,9 @@ void UGit::Add(BranchRegister * branchRegister, UGit::Branch * branch){
 }
 
 void UGit::Remove(BranchRegister * branchRegister, string branch){
-	delete GetNode(branchRegister, branch);
+	NodeBranchRegister* toDelete = GetNode(branchRegister, branch);
+	delete toDelete->branch;
+	delete toDelete;
 }
 
 bool UGit::Contains(BranchRegister * branchRegister, string branchName){
