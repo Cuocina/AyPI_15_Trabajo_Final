@@ -23,7 +23,6 @@ namespace UGit {
 	// Postcondicion: Igual a la primitiva anterior pero establece varios parents en lugar de uno solo
 	Commit* CreateCommit(void* parents, string message);
 
-
 	// Precondicion: @commit es una intancia valida
 	// Postcondicion: Devuelve la fecha y hora de creacion del @commit
 	DateTime* GetDate(const Commit* commit);
@@ -52,5 +51,6 @@ namespace UGit {
 	// Postcondicion: Libera todos los recursos asociados de @commit
 	void DestroyCommit(Commit* commit);
 }
+
 #endif
 

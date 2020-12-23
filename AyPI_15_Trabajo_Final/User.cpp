@@ -1,5 +1,5 @@
 #include "User.h"
-using namespace UUser;
+using UUser::User;
 
 struct UUser::User {
 	string nickName;
@@ -23,16 +23,13 @@ string UUser::GetLastName(const User* user) {
 	return user->lastName;
 }
 
-
 string UUser::GetName(const User* user) {
 	return user->name;
 }
 
-
 void UUser::SetName(User* user, string name) {
 	user->name = name;
 }
-
 
 void UUser::SetLastName(User* user, string lastName) {
 	user->lastName = lastName;

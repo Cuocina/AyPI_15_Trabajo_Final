@@ -4,15 +4,12 @@
 #include "CommitBag.h"
 #include "Commit.h"
 #include <string>
-#include <iostream>
 
 using namespace UGit;
-using namespace UCommitBagIterator;
+using UCommitBagIterator::CommitBagIterator;
 using std::string;
-using namespace std;
 
-
-// Estructuras Auxiliares:
+// Estructuras Auxiliares
 struct NodoHook {
 	UGit::Hook hook;
 	NodoHook* next;
@@ -23,13 +20,25 @@ struct ListaHooks {
 	NodoHook* first;
 };
 
-// Estructuras:
 struct UGit::Git {
 	ListaHooks* gitEventsBranch;
 	ListaHooks* gitEventsCommit;
 };
 
-// Funciones auxiliares:
+// Funciones auxiliares
+ListaHooks* CreateGitEvents();
+NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next);
+void AddEvents(ListaHooks* gitEvents, Hook hook);
+void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch);
+void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit);
+
+Git* UGit::CreateGit() {
+	UGit::Git* git = new UGit::Git;
+	git->gitEventsBranch = CreateGitEvents();
+	git->gitEventsCommit = CreateGitEvents();
+	return git;
+}
+
 ListaHooks* CreateGitEvents() {
 	ListaHooks* newEvent = new ListaHooks;
 	newEvent->first = NULL;
@@ -56,7 +65,6 @@ NodoHook* GetLastestEventCommit(UGit::Git* git) {
 	while (iterator->next != NULL) {
 		iterator = iterator->next;
 	}
-
 	return iterator;
 }
 
@@ -73,42 +81,28 @@ void AddEvents(ListaHooks* gitEvents, Hook hook) {
 	}
 }
 
-void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch) {
-	NodoHook* iterator = gitEvents->first;
-	while (iterator->next != NULL) {
-		if (iterator->hook != NULL)
-			iterator->hook(branch);
-		iterator = iterator->next;
-	};
-	iterator->hook(branch);
-}
-
-void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit) {
-	NodoHook* iterator = gitEvents->first;
-	while (iterator->next != NULL) {
-		if (iterator->hook != NULL)
-			iterator->hook(commit);
-		iterator = iterator->next;
-		iterator->hook(commit);
+void UGit::AddHook(Git* git, GitEvent event, Hook hook) {
+	if (event == NewBranchCreated) {
+		AddEvents(git->gitEventsBranch, hook);
 	}
-}
-
-// Implementaciones: 
-Git* UGit::CreateGit() {
-	UGit::Git* git = new UGit::Git;
-	git->gitEventsBranch = CreateGitEvents();
-	git->gitEventsCommit = CreateGitEvents();
-	return git;
+	else {
+		AddEvents(git->gitEventsCommit, hook);
+	}
 }
 
 Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
+	Branch* newBranch = NULL;
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
 	if (!UGit::Contains(branchRegister, branchName)) {
-		UGit::Branch* newBranch = baseBranch == NULL ? UGit::CreateBranch(branchName, NULL) : UGit::CreateBranch(branchName, UGit::GetLastCommit(baseBranch));
+		newBranch = baseBranch == NULL ? UGit::CreateBranch(branchName, NULL) : UGit::CreateBranch(branchName, UGit::GetLastCommit(baseBranch));
 		UGit::Add(branchRegister, newBranch);
 		RunHooks(git->gitEventsBranch, newBranch);
-		return newBranch;
 	}
+	return newBranch;
+}
+
+// Implementar: 
+void UGit::DeleteBranch(Git * git, string branchName) {
 }
 
 Commit* UGit::NewCommit(Git* git, string branchName, string message) {
@@ -124,13 +118,28 @@ Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	}
 }
 
-void UGit::AddHook(Git* git, GitEvent event, Hook hook) {
-	if (event == NewBranchCreated) {
-		AddEvents(git->gitEventsBranch, hook);
+void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit) {
+	NodoHook* iterator = gitEvents->first;
+	while (iterator->next != NULL) {
+		if (iterator->hook != NULL)
+			iterator->hook(commit);
+		iterator = iterator->next;
+		iterator->hook(commit);
 	}
-	else {
-		AddEvents(git->gitEventsCommit, hook);
+}
+
+void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch) {
+	NodoHook* iterator = gitEvents->first;
+	while (iterator->next != NULL) {
+		if (iterator->hook != NULL)
+			iterator->hook(branch);
+		iterator = iterator->next;
 	}
+	iterator->hook(branch);
+}
+
+void UGit::Destroy(Git * git) {
+	delete git;
 }
 
 void UGit::Merge(Git* git, Branch* from, Branch* to) {
@@ -140,28 +149,6 @@ void UGit::Merge(Git* git, Branch* from, Branch* to) {
 		UGit::Add(parents, UGit::GetLastCommit(to));
 		UGit::Commit* newCommit = UGit::CreateCommit(parents, "branch " + UGit::GetName(from) + " merge on " + UGit::GetName(to));
 		UGit::SetLastCommit(to, newCommit);
-
 		RunHooks(git->gitEventsCommit, newCommit);
 	}
-}
-
-// Destroys:
-void UGit::DeleteBranch(Git * git, string branchName) {
-	UGit::Remove(UGit::GetBranchRegister(), branchName);
-}
-
-void DestroyListaHook(ListaHooks* list) {
-	while (list->first->next != NULL) {
-		NodoHook* toDelete = list->first;
-		list->first = list->first->next;
-		delete toDelete;
-	}
-	delete list->first;
-	delete list;
-}
-
-void UGit::Destroy(Git * git) {
-	DestroyListaHook(git->gitEventsBranch);
-	DestroyListaHook(git->gitEventsCommit);
-	delete git;
 }

@@ -2,10 +2,10 @@
 #include "Commit.h"
 #include <string>
 
-using namespace UGit::UCommitBagIterator;
+using namespace UGit;
 using std::string;
 
-// Estructuras Auxiliares:
+// Estructura Auxiliar:
 struct CommitBagNode {
 	UGit::Commit* item;
 	CommitBagNode* next;
@@ -21,8 +21,11 @@ struct UGit::UCommitBagIterator::CommitBagIterator {
 };
 
 // Funciones Auxiliares:
+UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag);
+CommitBagNode* CreateNode(UGit::Commit* commit);
+
 UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag) {
-	UGit::UCommitBagIterator::CommitBagIterator* iterator = Begin(bag);
+	UGit::UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(bag);
 	if (iterator != NULL) {
 		while (!IsEnd(iterator)) {
 			Next(iterator);
@@ -30,7 +33,7 @@ UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* ba
 		return iterator;
 	}
 	else {
-		return iterator = CreateIterator(NULL);
+		return iterator = UGit::UCommitBagIterator::CreateIterator(NULL);
 	}
 }
 
@@ -38,7 +41,6 @@ CommitBagNode* CreateNode(UGit::Commit* commit) {
 	CommitBagNode* node = new CommitBagNode;
 	node->item = NULL;
 	node->next = NULL;
-
 	return node;
 }
 
@@ -80,7 +82,6 @@ int UGit::Count(CommitBag * bag) {
 UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::CreateIterator(UGit::Commit* commit) {
 	UGit::UCommitBagIterator::CommitBagIterator* commitBagIterator = new UGit::UCommitBagIterator::CommitBagIterator;
 	commitBagIterator->node = CreateNode(commit);
-
 	return commitBagIterator;
 }
 
@@ -89,7 +90,7 @@ UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::Begin(UGi
 }
 
 void UGit::UCommitBagIterator::Next(CommitBagIterator * iterator) {
-	iterator->node=iterator->node->next;
+	iterator->node = iterator->node->next;
 }
 
 bool UGit::UCommitBagIterator::IsEnd(const CommitBagIterator * iterator) {
@@ -100,7 +101,6 @@ UGit::Commit * UGit::UCommitBagIterator::GetCommit(CommitBagIterator * iterator)
 	return iterator->node->item;
 }
 
-
 // Destroys:
 void UGit::UCommitBagIterator::DestroyIterator(CommitBagIterator * iterator) {
 	if (iterator != NULL) {
@@ -109,7 +109,7 @@ void UGit::UCommitBagIterator::DestroyIterator(CommitBagIterator * iterator) {
 }
 
 void UGit::DestroyBag(CommitBag * bag) {
-	CommitBagIterator* iterador = UGit::UCommitBagIterator::Begin(bag);
+	UGit::UCommitBagIterator::CommitBagIterator* iterador = UGit::UCommitBagIterator::Begin(bag);
 	while (!IsEnd(iterador)) {
 		CommitBagNode* toDelete = iterador->node;
 		Next(iterador);

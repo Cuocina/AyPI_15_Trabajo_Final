@@ -7,23 +7,22 @@
 #include "Commit.h"
 #include "CommitBag.h"
 
-using namespace UGit;
+using UGit::Commit;
 using namespace UContext;
-using namespace UDateTime;
-using namespace UUser;
-using namespace std;
+using UDateTime::DateTime;
+using UUser::User;
+using std::string;
+using UGit::CommitBag;
 
 struct UGit::Commit {
-	UGit::Commit* parent;
+	UGit::CommitBag* parents;
 	string message;
 	string hashCode;
 	UDateTime::DateTime* context;
 	UUser::User* user;
 };
 
-
 //Funciones auxiliares
-
 bool RandomSecuencyInitialized = false;
 
 string CreateHashCode() {
@@ -41,7 +40,8 @@ string CreateHashCode() {
 
 UGit::Commit* UGit::CreateCommit(void* parents, string message) {
 	UGit::Commit* commit = new UGit::Commit;
-	commit->parent = (UGit::Commit*)parents;
+	commit->parents = UGit::CreateBag();
+	UGit::Add(commit->parents, (UGit::Commit*)parents);
 	commit->message = message;
 	commit->hashCode = CreateHashCode();
 	commit->context = UContext::GetNow();
@@ -62,14 +62,7 @@ string UGit::GetMessage(const Commit* commit) {
 }
 
 void* UGit::GetParents(Commit* commit) {
-	UGit::Commit* iterator = commit;
-	UGit::CommitBag* bag = UGit::CreateBag();
-	while (iterator->parent != NULL) {
-		UGit::Add(bag, commit);
-		iterator = iterator->parent;
-	}
-
-	return bag;
+	return commit->parents;
 }
 
 string UGit::GetHashCode(const Commit* commit) {

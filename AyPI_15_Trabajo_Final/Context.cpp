@@ -1,7 +1,8 @@
-#include "Context.h" 
+#include "Context.h"
+#include "User.h"
 
 using namespace UContext;
-using namespace UUser;
+using UUser::User;
 
 UUser::User* uniqueInstance = UUser::CreateUser("nickname");
 

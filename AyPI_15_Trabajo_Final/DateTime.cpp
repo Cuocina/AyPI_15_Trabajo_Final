@@ -4,7 +4,7 @@
 #include <conio.h>
 #include "DateTime.h"
 
-using namespace UDateTime;
+using UDateTime::DateTime;
 using namespace std;
 
 struct UDateTime::DateTime {
@@ -25,6 +25,7 @@ bool IsValidData(int data, int start, int end) {
 	bool isValidData;
 	return isValidData = (data >= start && data <= end) ? true : false;
 }
+
 string AddZero(int numero) {
 	string addZero;
 	return addZero = numero < 10 ? to_string(0) : "";
@@ -34,11 +35,11 @@ bool IsBeforeMidday(int hour) {
 	bool isBeforemidday;
 	return isBeforemidday = (hour < 12) ? true : false;
 }
+
 int AddHour(int hour, int auxHour) {
 	int addHour = (IsBeforeMidday(hour)) ? hour : auxHour - 12;
 	return addHour;
 }
-
 
 UDateTime::DateTime* UDateTime::Now() {
 	DateTime* dateTime = new DateTime;
@@ -53,7 +54,6 @@ UDateTime::DateTime* UDateTime::Now() {
 	dateTime->seconds = newtime.tm_sec;
 	return dateTime;
 }
-
 
 UDateTime::DateTime* UDateTime::CreateDateTime(unsigned int year, unsigned int month, unsigned int day, unsigned int hour, int minutes, int seconds) {
 	DateTime* dateTime = NULL;

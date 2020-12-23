@@ -61,6 +61,6 @@ namespace UDateTime {
 	void DestroyDateTime(DateTime* dateTime);
 }
 
-
 #endif
+
 

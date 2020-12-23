@@ -20,16 +20,13 @@ namespace UUser {
 	// Postcondicion: Devuelve el apellido de @user
 	string GetLastName(const User* user);
 
-
 	// Precondicion: @user es una instancia valida
 	// Postcondicion: Devuelve el nombre de @user
 	string GetName(const User* user);
 
-
 	// Precondicion: @user es una instancia valida
 	// Postcondicion: Cambia el nombre de @user por @name
 	void SetName(User* user, string name);
-
 
 	// Precondicion: @user es una instancia valida
 	// Postcondicion: Cambia el pellido de @user por @apellido
@@ -41,4 +38,3 @@ namespace UUser {
 }
 
 #endif
-

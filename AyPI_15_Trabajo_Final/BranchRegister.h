@@ -14,7 +14,6 @@ namespace UGit {
 	// Postcondición: Devuelve una instancia unica de BranchRegister. 
 	BranchRegister* GetBranchRegister();
 
-
 	// Precondición: @branchName es una instancia valida
 	// Postcondicion: Devuelve el Branch de @branchName
 	UGit::Branch* Get(BranchRegister* branchRegister, string branchName);
