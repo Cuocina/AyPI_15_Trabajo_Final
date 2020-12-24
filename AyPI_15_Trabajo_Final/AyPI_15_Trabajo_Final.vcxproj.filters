@@ -42,6 +42,12 @@
     <ClCompile Include="BranchRegister.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="CommitGraph.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="RecorridoAnchura.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Context.h">
@@ -66,6 +72,12 @@
       <Filter>Archivos de origen</Filter>
     </ClInclude>
     <ClInclude Include="Commit.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
+    <ClInclude Include="CommitGraph.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
+    <ClInclude Include="RecorridoAnchura.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>

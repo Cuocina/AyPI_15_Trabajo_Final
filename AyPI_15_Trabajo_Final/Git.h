@@ -2,15 +2,16 @@
 #define GIT_H_
 
 #include "Branch.h"
+#include <string>
 
 using UGit::Branch;
+using std::string;
 
 namespace UGit {
 	struct Git;
 
 	typedef void(*Hook)(void* parameter);
 	enum GitEvent { NewBranchCreated, NewCommitAdded };
-
 	/*
 	 * Precondicion: Ninguna
 	 * Postcondicion: Crea una instancia valida de Git que no tiene ningun HOOK
@@ -47,14 +48,24 @@ namespace UGit {
 	void AddHook(Git* git, GitEvent event, Hook hook);
 
 	/*
-	 * Precondicion: @git @from y @to son instancias validas
-	 * Postcondicion: Si @from y @to tienen como ultimo commit el mismo commit no realiza ninguna accion
-	 * Si @from y @to tienen distintos commits entonces realiza las siguinetes acciones
+	 * Precondicion: @git es una instancia valida
+	 * Postcondicion: Si alguno de los dos branch no existen en la register no realiza ninguna accion. Si @from y @to son branch que existen en la register y tienen como ultimo commit el mismo commit no realiza ninguna accion
+	 * Si @from y @to tienen distintos commits entonces realiza las siguientes acciones
 	 * - Crea una nuevo commit que tiene como padre los dos ultimos commit de @from y @to y como mensaje "branch [nombre branch @from] merged on [nombre branch @to]"
 	 * - Establece como ultimo commit en @to el commit creado
 	 * - Invoca todos los Hook asociados al evento NewCommitAdded pasando como parametro el commit creado. El orden de invocacion debe ser FIFO
 	 */
-	void Merge(Git* git, Branch* from, Branch* to);
+	void Merge(Git* git, string from, string to);
+
+	/*
+	 * Precondicion: @git es una instancia valida
+	 * Postcondicion: Si @branchName no existe en la register no realiza ninguna accion.
+	 * Si @branchName existe muestra por salida estandar (pantalla) un recorrido del grafo de commit desde el ultimo commit de @branchName
+	 * La informacion que debe mostrar y la forma en la que lo debe mostrar debe ser la misma que el comando de git: git log --graph
+	 * Si oneLine es true, la informacion de cada commit debe ser de una linea (equivalente al comando git log --graph --oneline)
+	 * Ver la documentacion que se encuentra en el enunciado
+	 */
+	void LogGraph(Git* git, string branchName, bool oneLine);
 
 	/*
 	 * Precondicion: @git es una instancia valida
@@ -64,4 +75,5 @@ namespace UGit {
 }
 
 #endif
+
 

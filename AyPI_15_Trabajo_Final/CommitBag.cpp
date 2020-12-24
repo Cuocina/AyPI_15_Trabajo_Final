@@ -39,7 +39,7 @@ UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* ba
 
 CommitBagNode* CreateNode(UGit::Commit* commit) {
 	CommitBagNode* node = new CommitBagNode;
-	node->item = NULL;
+	node->item = commit;
 	node->next = NULL;
 	return node;
 }
