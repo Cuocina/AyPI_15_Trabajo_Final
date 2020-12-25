@@ -1,20 +1,18 @@
 #ifndef RECORRIDOANCHURA_H_
 #define RECORRIDOANCHURA_H_
 
-#include "CommitGraph.h"
+#include "Commitgraph.h"
 #include "Commit.h"
 
 using UGitCommitGraph::CommitGraph;
 using UGit::Commit;
 
-namespace UGitCommitGraph {
+namespace URGRecorridoAnchura {
 	struct RecorridoAnchura;
-	typedef void(*TipoVisitar)(int vertice);
-	RecorridoAnchura* Crear(UGitCommitGraph::CommitGraph* grafo, int* comienzo, TipoVisitar visitar);
-	bool EsAlcanzable(RecorridoAnchura* recorrido, int destino);
-	int ObtenerDistanciaCamino(RecorridoAnchura* recorrido, int destino);
+	typedef void(*TipoVisitar)(Commit* vertice);
+	RecorridoAnchura* Crear(CommitGraph* grafo, Commit* comienzo, TipoVisitar visitar);
 	void Destruir(RecorridoAnchura* recorrido);
 }
 
-#endif
 
+#endif

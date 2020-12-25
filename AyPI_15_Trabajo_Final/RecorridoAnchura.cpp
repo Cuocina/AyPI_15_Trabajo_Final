@@ -1,19 +1,52 @@
 #include "RecorridoAnchura.h"
 #include "CommitGraph.h"
-// #include "Cola.h"
-/*
+#include "Commit.h"
+#include "Cola.h"
+#include <string>
+#include <iostream>
+
 using namespace UGitCommitGraph::AdyacencyListIterator;
-using UGitCommitGraph::RecorridoAnchura;
+using namespace std;
+using URGRecorridoAnchura::RecorridoAnchura;
+using UGitCommitGraph::CommitGraph;
+using UGit::Commit;
+using UGitCola::Cola;
+using UGitCommitGraph::AdyacencyListIterator::Iterator;
+using std::string;
 
 const int NoEstaMarcado = -1;
-const int Infinito = -1;
 
+// Estructuras
 struct URGRecorridoAnchura::RecorridoAnchura {
 	int origenRecorrido;
 	int *adyacenteA; // Diccionario que tiene como clave el vertice y como valor indica el vertices desde donde vino. Si no tiene ninguna valor significa que no fue marcado y se deben agregar en la cola solo los que no fueron marcados (excepto el origen del recorrido)
-	int *distanciaA; // Diccionario que tiene como clave el vertice y como valor la longuitud de camino (minimo?) de origen de recorriodo a la clave
 	TipoVisitar visitar;
 };
+
+//Funciones Auxiliares
+Commit** CrearVector(CommitGraph* grafo);
+int ObtenerIndice(Commit** vectorCommits, Commit* comienzo);
+void Inicializar(bool* visitados, int cantidad);
+
+//Implemetaciones Auxiliares
+Commit** CrearVector(CommitGraph* grafo) {
+	int cantidadVertices = UGitCommitGraph::CountVertex(grafo);
+	Commit** vector = new Commit*[cantidadVertices];
+	for (int indice = 0; indice < cantidadVertices; indice++) {
+		vector[indice] = UGitCommitGraph::GetCommit(grafo, indice);
+	}
+
+	return vector;
+}
+
+int ObtenerIndice(Commit** vectorCommits, Commit* comienzo) {
+	int indice = 0;
+	while (vectorCommits[indice] != comienzo) {
+		indice++;
+	}
+
+	return indice;
+}
 
 void Inicializar(bool* visitados, int cantidad) {
 	for (int i = 0; i < cantidad; ++i) {
@@ -21,49 +54,51 @@ void Inicializar(bool* visitados, int cantidad) {
 	}
 }
 
-void BFS(URGGrafo::Grafo* grafo, RecorridoAnchura* recorrido, int verticeOrigenRecorrido) {
-	Cola* cola = CrearCola();
-	Encolar(cola, verticeOrigenRecorrido);
-	int distanciaRecorrida = 0;
-	while (!EstaVacia(cola)) {
-		int verticeAVisitar = Desencolar(cola);
-		recorrido->visitar(verticeAVisitar);
-		int distanciaRecorridoAlMomento = verticeAVisitar == verticeOrigenRecorrido ? -1 : recorrido->distanciaA[recorrido->adyacenteA[verticeAVisitar]];
-		recorrido->distanciaA[verticeAVisitar] = distanciaRecorridoAlMomento + 1;
-		Iterador* iterador = Crear(grafo, verticeAVisitar);
-		while (!EsFin(iterador)) {
-			int verticeAdyacente = Siguiente(iterador);
+//Implementaciones
+
+// Tengo el grafo, el recorrido que tiene
+// origen del recorrido (es la posicion donde del vector commits, donde esta el commit desde donde comenzamos) Es el mismo orden que la lista azul de commitgraph
+// adyacente (vector que sus posiciones representan las del vector commits, y su valor es la posicion de su commit hijo)
+// visitar _= es la funcion que le pasamos por parametro, en este caso seria la de Mostrar
+void BFS(UGitCommitGraph::CommitGraph* grafo, RecorridoAnchura* recorrido, Commit** vectorCommit) {
+	Cola* cola = UGitCola::CrearCola();
+	int verticeOrigenRecorrido = recorrido->origenRecorrido;
+	UGitCola::Encolar(cola, verticeOrigenRecorrido);
+	while (!UGitCola::EstaVacia(cola)) {
+		int verticeAVisitar = UGitCola::Desencolar(cola);
+		recorrido->visitar(vectorCommit[verticeAVisitar]); // Acá se ejecuta la funcion mostrar
+		Iterator* iterador = UGitCommitGraph::AdyacencyListIterator::Comienzo(grafo, UGit::GetHashCode(vectorCommit[verticeAVisitar])); //Obtengo el primer nodo de la bolsa
+		while (!UGitCommitGraph::AdyacencyListIterator::End(iterador)) { // me fijo si no se termino la bolsa (es decir iterator = NULL)
+			Commit* commit = UGitCommitGraph::AdyacencyListIterator::Get(iterador); // Obtengo el commit del nodo en el que estoy
+			int verticeAdyacente = ObtenerIndice(vectorCommit, commit); // obtengo el indice de ese commit en el vector de commit
 			if (recorrido->adyacenteA[verticeAdyacente] == NoEstaMarcado && verticeAdyacente != verticeOrigenRecorrido) {
-				Encolar(cola, verticeAdyacente);
+				UGitCola::Encolar(cola, verticeAdyacente);
 				recorrido->adyacenteA[verticeAdyacente] = verticeAVisitar;
 			}
+			UGitCommitGraph::AdyacencyListIterator::Next(iterador);
 		}
-		Destruir(iterador);
+		//Destruir(iterador);
 	}
 
-	DestruirCola(cola);
+	UGitCola::DestruirCola(cola);
 }
 
-int Inicializar(int vector[], int cantidadElementos, int valor) {
+void Inicializar(int vector[], int cantidadElementos, int valor) {
 	for (int i = 0; i < cantidadElementos; ++i) {
 		vector[i] = valor;
 	}
 }
 
-int URGRecorridoAnchura::ObtenerDistanciaCamino(RecorridoAnchura* recorrido, int destino) {
-	return recorrido->distanciaA[destino];
-}
-
-RecorridoAnchura* URGRecorridoAnchura::Crear(Grafo* grafo, int comienzo, TipoVisitar visitar) {
-	RecorridoAnchura* bfs = new RecorridoAnchura;
-	bfs->visitar = visitar;
-	int cantidadVertices = URGGrafo::ObtenerCantidadVertices(grafo);
-	bfs->adyacenteA = new int[cantidadVertices];
-	bfs->distanciaA = new int[cantidadVertices];
-	Inicializar(bfs->adyacenteA, cantidadVertices, NoEstaMarcado);
-	Inicializar(bfs->distanciaA, cantidadVertices, Infinito);
-	bfs->origenRecorrido = comienzo;
-	BFS(grafo, bfs, comienzo);
+RecorridoAnchura* URGRecorridoAnchura::Crear(CommitGraph* grafo, Commit* comienzo, TipoVisitar visitar) {
+	int cantidadVertices = UGitCommitGraph::CountVertex(grafo);// Obtener cantidad de commits del grafo
+	Commit** vectorCommits  = CrearVector (grafo); // Creo un vector de Commits ordenados como la lista azul
+	int indiceComienzo = ObtenerIndice(vectorCommits, comienzo);	// Ver en que posicion está el commit del comienzo 
+	RecorridoAnchura* bfs = new RecorridoAnchura; // Creo un nuevo recorrido
+	bfs->visitar = visitar; // Le asigno la funcion pasada por parametro
+	bfs->adyacenteA = new int[cantidadVertices]; // Creo un vector (diccionario) - donde la posicion es la del vertice, y el valor es de donde vino (su hijo)
+	Inicializar(bfs->adyacenteA, cantidadVertices, NoEstaMarcado); // inicio el vertice con el valor -1
+	bfs->origenRecorrido = indiceComienzo;
+	BFS(grafo, bfs, vectorCommits);
 
 	return bfs;
 }
@@ -72,9 +107,3 @@ void URGRecorridoAnchura::Destruir(RecorridoAnchura* recorrido) {
 	delete[]recorrido->adyacenteA;
 	delete recorrido;
 }
-
-bool URGRecorridoAnchura::EsAlcanzable(RecorridoAnchura* recorrido, int destino) {
-	return recorrido->adyacenteA[destino] != NoEstaMarcado || destino == recorrido->origenRecorrido;
-}
-
-*/

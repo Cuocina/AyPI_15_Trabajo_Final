@@ -48,6 +48,9 @@
     <ClCompile Include="RecorridoAnchura.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Cola.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Context.h">
@@ -78,6 +81,9 @@
       <Filter>Archivos de origen</Filter>
     </ClInclude>
     <ClInclude Include="RecorridoAnchura.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
+    <ClInclude Include="Cola.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>

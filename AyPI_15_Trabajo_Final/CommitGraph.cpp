@@ -22,6 +22,7 @@ struct Vertex {
 // Estructuras:
 struct CommitGraph {
 	Vertex* first;
+	int count;
 };
 
 //Funciones Auxiliares
@@ -46,9 +47,8 @@ bool RecorrerAdyacencias(CommitBag* adyacencias, Commit* destination) { // Recor
 Vertex* GetVertex(CommitGraph*  graph, string hashCode) {
 	Vertex* iterator = graph->first; // Obtengo el primero vertice del grafo
 	bool contain = false;
-	while (iterator->next != NULL) { // Recorro la primer lista
+	while (iterator->next != NULL && contain==false) { // Recorro la primer lista
 		if (iterator->hashCode == hashCode) { // busco a source
-			return iterator;
 			contain = true;
 		}
 		iterator = iterator->next;
@@ -92,8 +92,28 @@ Vertex* GetLastestVertex(CommitGraph* graph) {
 CommitGraph * UGitCommitGraph::Create() {
 	CommitGraph* graph = new CommitGraph;
 	graph->first = NULL;
+	graph->count = 0;
 
 	return graph;
+}
+
+// Precondición: @grafo es una instancia valida
+// Postcondición: Devuelve la cantidad de vertices del grafo
+int UGitCommitGraph::CountVertex(CommitGraph* grafo) {
+	return grafo->count;
+}
+
+Commit* UGitCommitGraph::GetCommit(CommitGraph * graph, int indice){
+	if (indice < graph->count) { // valido el indice (si hay un vertice, el indice es 0 pero la cantidad de vertices es 1)
+		Vertex* iterator = graph->first; // obtengo el primer vertice de la lista azul
+		int count = 0;
+		while (count != indice) { // voy adelantando el iterador hasta llegar a la posicion indicada
+			count++;
+			iterator = iterator->next;
+		}
+
+		return iterator->commit;
+	}
 }
 
 // Precondicion: @graph, @source y @destination son instancias validas
@@ -102,18 +122,20 @@ CommitGraph * UGitCommitGraph::Create() {
 void UGitCommitGraph::Connect(CommitGraph * graph, Commit * source, Commit * destination){
 	if (graph->first==NULL) {
 		graph->first = CreateVertex(source);
+		graph->count++; // aumento la cantidad de vertices
 	}
 	else {
 		if (InTheGraph(graph, source)) {
 			if (!UGitCommitGraph::AreConnected(graph, source, destination)) { // si no están conectados
-				string hashCode = UGit::GetHashCode(destination);
-				Vertex* vertex = GetVertex(graph, hashCode); // busco el vertice de destination
-				vertex->next = CreateVertex(source); // Establezco a source como ultimo en la lista azul
+				string hashCode = UGit::GetHashCode(source); //obtengo el hashcode de source
+				Vertex* vertex = GetVertex(graph, hashCode); // busco el vertice de source
+				UGit::Add(vertex->adyacency, destination); // Agrego a los padres de source el destination
 			}
 		}
 		else {
 			Vertex* vertex = GetLastestVertex(graph);
 			vertex->next = CreateVertex(source);
+			graph->count++;	// aumento la cantidad de vertices
 		}
 	}
 }
@@ -166,11 +188,11 @@ void UGitCommitGraph::AdyacencyListIterator::Next(Iterator* iterator) {
 }
 
 //Destroys 
-void Destroy(Iterator* iterador) {
+void  UGitCommitGraph::AdyacencyListIterator::Destroy(Iterator* iterador) {
 	delete iterador;
 }
 
-void Destroy(CommitGraph* graph) {
+void UGitCommitGraph::Destroy(CommitGraph* graph) {
 	Vertex* iterator = graph->first;
 	while (iterator->next != NULL) {
 		Vertex* toDelete = iterator;

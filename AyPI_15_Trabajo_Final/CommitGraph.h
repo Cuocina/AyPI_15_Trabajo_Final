@@ -11,6 +11,15 @@ namespace UGitCommitGraph {
 	// Postcondicion: Crear un grafo vacio
 	CommitGraph* Create();
 
+	// Funciones Agregadas:
+	// Precondición: @grafo es una instancia valida
+	// Postcondición: Devuelve la cantidad de vertices del grafo
+	int CountVertex(CommitGraph* grafo);
+
+	// Precondición: @grafo es una instancia valida.
+	// Postcondición: Devuelve el Commit de @grafo en la posición indicada
+	Commit* GetCommit(CommitGraph* graph, int indice);
+
 	// Precondicion: @graph, @source y @destination son instancias validas
 	// Postcondicion: Si @source y @destination ya estan conectados no realiza ningun accion.
 	// Si @source y @destintion no estan conectados realiza una conexion directa (no conmutativa) con origen en @source y destino en @destination

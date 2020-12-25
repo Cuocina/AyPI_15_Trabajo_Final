@@ -6,12 +6,14 @@
 #include <string>
 #include <iostream>
 #include"CommitGraph.h"
+#include "RecorridoAnchura.h"
 
 using namespace UGit;
 using namespace std;
 using UCommitBagIterator::CommitBagIterator;
 using UGitCommitGraph::CommitGraph;
 using std::string;
+using URGRecorridoAnchura::RecorridoAnchura;
 
 // Estructuras Auxiliares
 struct NodoHook {
@@ -37,7 +39,8 @@ NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next);
 void AddEvents(ListaHooks* gitEvents, Hook hook);
 void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch);
 void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit);
-void Mostrar(Commit* commit, bool online);
+void MostrarCorto(Commit* commit);
+void MostrarLargo(Commit* commit);
 
 ListaHooks* CreateGitEvents() {
 	ListaHooks* newEvent = new ListaHooks;
@@ -101,17 +104,17 @@ NodoHook* GetLastestEventCommit(UGit::Git* git) {
 	return iterator;
 }
 
-void Mostrar(Commit* commit, bool online) {
-	if (online = true) {
-		cout << UGit::GetShortHashCode(commit);
-		cout<< UGit::GetMessage(commit) << endl;
-	}
-	else {
-		cout << UGit::GetHashCode(commit) << endl;
-		cout << UGit::GetAuthor(commit) << endl;
-		cout << UGit::GetDate(commit) << endl;
-		cout << UGit::GetMessage(commit) << endl;
-	}
+void MostrarLargo(Commit* commit) {
+	
+	cout << UGit::GetHashCode(commit) << endl;
+	cout << UGit::GetAuthor(commit) << endl;
+	cout << UGit::GetDate(commit) << endl;
+	cout << UGit::GetMessage(commit) << endl;
+}
+
+void MostrarCorto(Commit* commit) {
+	cout << UGit::GetShortHashCode(commit);
+	cout << UGit::GetMessage(commit) << endl;
 }
 
 // Implementaciones
@@ -174,30 +177,20 @@ void UGit::Merge(Git* git, string from, string to) {
 		UGit::Add(parents, UGit::GetLastCommit(UGit::Get(branchRegister, to)));
 		UGit::Commit* newCommit = UGit::CreateCommit(parents, "branch " + from + " merge on " + to);
 		UGit::SetLastCommit(UGit::Get(branchRegister, to), newCommit);
+		UGitCommitGraph::Connect(git->graph, newCommit, UGit::GetLastCommit(UGit::Get(branchRegister, to)));
 		RunHooks(git->gitEventsCommit, newCommit);
 	}
 }
 
-
-//PENDIENTE:
-/*
-	 * Precondicion: @git es una instancia valida
-	 * Postcondicion: Si @branchName no existe en la register no realiza ninguna accion.
-	 * Si @branchName existe muestra por salida estandar (pantalla) un recorrido del grafo de commit desde el ultimo commit de @branchName
-	 * La informacion que debe mostrar y la forma en la que lo debe mostrar debe ser la misma que el comando de git: git log --graph
-	 * Si oneLine es true, la informacion de cada commit debe ser de una linea (equivalente al comando git log --graph --oneline)
-	 * Ver la documentacion que se encuentra en el enunciado
-	 */
 void UGit::LogGraph(Git * git, string branchName, bool oneLine){
 	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) { // Miramos si tenemos el branch en el register
 		Branch* branch = Get(UGit::GetBranchRegister(), branchName); // obtengo el branch con ese nombra
 		Commit* lastestCommit = UGit::GetLastCommit(branch); // obtnego el commit de ese branch
-		if (oneLine = true) {
-			// Crear Recorrido con (graph, ultimo commit del branch, funcion mostrar(online))
+		if (oneLine == true) {
+			URGRecorridoAnchura::Crear(git->graph, lastestCommit, MostrarCorto);// Crear Recorrido con (graph, ultimo commit del branch, funcion mostrar(online))
 		}
 		else {
-			// Crear Recorrido con (graph, ultimo commit del branch, funcion mostrar(online))
-
+			URGRecorridoAnchura::Crear(git->graph, lastestCommit, MostrarLargo);// Crear Recorrido con (graph, ultimo commit del branch, funcion mostrar(online))
 		}
 	}
 }

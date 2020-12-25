@@ -154,6 +154,7 @@
     <ClCompile Include="AyPI_15_Trabajo_Final.cpp" />
     <ClCompile Include="Branch.cpp" />
     <ClCompile Include="BranchRegister.cpp" />
+    <ClCompile Include="Cola.cpp" />
     <ClCompile Include="Commit.cpp" />
     <ClCompile Include="CommitBag.cpp" />
     <ClCompile Include="CommitGraph.cpp" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="Branch.h" />
     <ClInclude Include="BranchRegister.h" />
+    <ClInclude Include="Cola.h" />
     <ClInclude Include="Commit.h" />
     <ClInclude Include="CommitBag.h" />
     <ClInclude Include="CommitGraph.h" />

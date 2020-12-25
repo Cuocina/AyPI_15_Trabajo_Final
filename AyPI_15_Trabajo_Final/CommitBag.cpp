@@ -94,7 +94,7 @@ void UGit::UCommitBagIterator::Next(CommitBagIterator * iterator) {
 }
 
 bool UGit::UCommitBagIterator::IsEnd(const CommitBagIterator * iterator) {
-	return iterator != NULL ? iterator->node->next == NULL : true;
+	return iterator->node == NULL ? true : false;
 }
 
 UGit::Commit * UGit::UCommitBagIterator::GetCommit(CommitBagIterator * iterator) {
