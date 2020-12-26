@@ -90,12 +90,16 @@ string MonthToString(int numMont) {
 	return month;
 }
 
+//Instancia Unica
+time_t lastestTime = time(NULL);
+
 //Implementaciones
 UDateTime::DateTime* UDateTime::Now() {
 	DateTime* dateTime = new DateTime;
 	struct tm newtime;
 	time_t now = time(NULL);
-	localtime_s(&newtime, &now);
+	lastestTime = lastestTime + now / 20000;
+	localtime_s(&newtime, &lastestTime);
 	dateTime->year = 1900 + newtime.tm_year;
 	dateTime->month = 1 + newtime.tm_mon;
 	dateTime->day = newtime.tm_mday;
