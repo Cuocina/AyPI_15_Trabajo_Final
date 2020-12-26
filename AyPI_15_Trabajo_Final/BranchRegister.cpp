@@ -8,8 +8,8 @@ using UGit::Branch;
 
 // Estructuras Auxiliares:
 struct NodeBranchRegister {
-	string branchName;		// key
-	UGit::Branch* branch;	// value
+	string branchName;		
+	UGit::Branch* branch;
 	NodeBranchRegister* next;
 };
 
@@ -24,6 +24,7 @@ UGit::BranchRegister* CreateBranchRegister();
 NodeBranchRegister* Begin(UGit::BranchRegister* branchRegister);
 NodeBranchRegister* CreateNodeBranchRegister(string branchName, UGit::Branch* branch, NodeBranchRegister* next);
 NodeBranchRegister* GetNode(BranchRegister* branchRegister, string branchName);
+void Destroy(NodeBranchRegister* toDelete);
 
 UGit::BranchRegister* CreateBranchRegister() {
 	UGit::BranchRegister* branchRegister = new UGit::BranchRegister;
@@ -56,6 +57,11 @@ NodeBranchRegister* GetNode(BranchRegister* branchRegister, string branchName) {
 	}
 }
 
+void Destroy(NodeBranchRegister* toDelete) {
+	if (toDelete != NULL)
+		delete toDelete;
+}
+
 // Instancia Única:
 UGit::BranchRegister* uniqueInstance = CreateBranchRegister();
 
@@ -83,8 +89,25 @@ void UGit::Add(BranchRegister * branchRegister, UGit::Branch * branch) {
 }
 
 void UGit::Remove(BranchRegister * branchRegister, string branchName) {
-	NodeBranchRegister* toDelete = GetNode(branchRegister, branchName);
-	UGit::DestroyBranch(toDelete->branch);
+	NodeBranchRegister* iterator = Begin(branchRegister);
+	if (iterator->next == NULL) {
+		branchRegister->first = NULL;
+		Destroy(iterator);
+	}
+	else {
+		if (iterator->branchName == branchName) {
+			branchRegister->first = branchRegister->first->next;
+			Destroy(iterator);
+		}
+		else {
+			while (!Equal(iterator->next->branchName, branchName)) {
+				iterator = iterator->next;
+			}
+			NodeBranchRegister* toDelete = iterator->next;
+			iterator->next = toDelete->next;
+			Destroy(toDelete);
+		}
+	}
 }
 
 bool UGit::Contains(BranchRegister * branchRegister, string branchName) {

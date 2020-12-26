@@ -30,7 +30,7 @@ int main() {
 	AddAllDeveloperFeatureChanges(git, Features, 3);
 	PrepareRelease(git, head, featureBranches, 3);
 	UGit::LogGraph(git, "master", false);
-	//UGit::Destroy(head);
+	UGit::DestroyBranch(head);
 	UGit::Destroy(git);
 	return 0;
 }

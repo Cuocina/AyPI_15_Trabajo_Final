@@ -31,5 +31,6 @@ void UGit::SetLastCommit(Branch * branch, Commit * commit) {
 }
 
 void UGit::DestroyBranch(Branch * branch) {
-	//delete branch;
+	if (branch != NULL);
+		delete branch;
 }

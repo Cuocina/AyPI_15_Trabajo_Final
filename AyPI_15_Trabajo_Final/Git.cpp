@@ -146,6 +146,7 @@ Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
 }
 
 void UGit::DeleteBranch(Git * git, string branchName) {
+	
 	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) {
 		UGit::Branch* toDelete = UGit::Get(UGit::GetBranchRegister(), branchName);
 		UGit::Remove(UGit::GetBranchRegister(), branchName);
