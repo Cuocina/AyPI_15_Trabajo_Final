@@ -105,7 +105,6 @@ NodoHook* GetLastestEventCommit(UGit::Git* git) {
 }
 
 void MostrarLargo(Commit* commit) {
-	
 	cout << UGit::GetHashCode(commit) << endl;
 	cout << UGit::GetAuthor(commit) << endl;
 	cout << UGit::GetDate(commit) << endl;
@@ -150,7 +149,8 @@ Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
 	Commit* newCommit=NULL;
 	if (UGit::Contains(branchRegister, branchName)) {
-		newCommit = UGit::CreateCommit(UGit::GetLastCommit(UGit::Get(branchRegister, branchName)), message);
+		CommitBag* parents = CreateBagCommit(UGit::GetLastCommit(UGit::Get(branchRegister, branchName)));
+		newCommit = UGit::CreateCommit(parents, message);
 		UGitCommitGraph::Connect(git->graph, newCommit, UGit::GetLastCommit(UGit::Get(branchRegister, branchName)));
 		UGit::SetLastCommit(UGit::Get(branchRegister, branchName), newCommit);
 		RunHooks(git->gitEventsCommit, newCommit);

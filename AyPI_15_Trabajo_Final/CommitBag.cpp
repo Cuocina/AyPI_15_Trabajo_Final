@@ -1,9 +1,12 @@
 #include "CommitBag.h"
 #include "Commit.h"
 #include <string>
+#include <iostream>
 
 using namespace UGit;
 using std::string;
+using UGit::UCommitBagIterator::CommitBagIterator;
+using UGit::Commit;
 
 // Estructura Auxiliar:
 struct CommitBagNode {
@@ -13,7 +16,7 @@ struct CommitBagNode {
 
 // Estructuras:
 struct UGit::CommitBag {
-	UGit::UCommitBagIterator::CommitBagIterator* first;
+	CommitBagNode* first;
 };
 
 struct UGit::UCommitBagIterator::CommitBagIterator {
@@ -23,18 +26,17 @@ struct UGit::UCommitBagIterator::CommitBagIterator {
 // Funciones Auxiliares:
 UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag);
 CommitBagNode* CreateNode(UGit::Commit* commit);
+bool EstaVacia(CommitBag* bag);
 
 UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag) {
 	UGit::UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(bag);
-	if (iterator != NULL) {
+	if (!EstaVacia(bag)) {
 		while (!IsEnd(iterator)) {
 			Next(iterator);
 		}
-		return iterator;
 	}
-	else {
-		return iterator = UGit::UCommitBagIterator::CreateIterator(NULL);
-	}
+	
+	return iterator;
 }
 
 CommitBagNode* CreateNode(UGit::Commit* commit) {
@@ -44,6 +46,10 @@ CommitBagNode* CreateNode(UGit::Commit* commit) {
 	return node;
 }
 
+bool EstaVacia(CommitBag* bag) {
+	return bag->first == NULL;
+}
+
 // Implementaciones Bag:
 UGit::CommitBag* UGit::CreateBag() {
 	UGit::CommitBag* commitBag = new UGit::CommitBag;
@@ -51,42 +57,41 @@ UGit::CommitBag* UGit::CreateBag() {
 	return commitBag;
 }
 
-void UGit::Add(UGit::CommitBag * bag, void* commit) {
-	UGit::UCommitBagIterator::CommitBagIterator* iterator = GetLatestCommit(bag);
-	iterator->node->next = CreateNode((UGit::Commit*)commit);
-	delete(iterator);
+CommitBag * UGit::CreateBagCommit(Commit * commit){
+	UGit::CommitBag* commitBag = new UGit::CommitBag;
+	commitBag->first = CreateNode(commit);
+	return commitBag;
 }
 
-void UGit::AddCommits(CommitBag * bag, CommitBag* bagFrom, int cantidad) {
-	UCommitBagIterator::CommitBagIterator* iterator = UCommitBagIterator::Begin(bagFrom);
-	for (int i = 0; i < UGit::Count(bagFrom) - cantidad; i++) {
-		Next(iterator);
+void UGit::Add(UGit::CommitBag * bag, void* commit) {
+	if (EstaVacia(bag)) {
+		bag->first = CreateNode((UGit::Commit*)commit);
 	}
-	for (int i = 0; i < cantidad; i++) {
-		Add(bag, UCommitBagIterator::GetCommit(iterator));
-		Next(iterator);
+	else {
+		UGit::UCommitBagIterator::CommitBagIterator* iterator = GetLatestCommit(bag);
+		iterator->node->next = CreateNode((UGit::Commit*)commit);
 	}
 }
 
 int UGit::Count(CommitBag * bag) {
 	int total = 0;
-	UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(bag);
-	while (!IsEnd(iterator)) {
-		Next(iterator);
+	if (!EstaVacia(bag)) {
+		UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(bag);
 		total++;
+		while (!IsEnd(iterator)) {
+			Next(iterator);
+			total++;
+		}
+		
 	}
+	
 	return total;
 }
 
-// Implementaciones Iterator
-UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::CreateIterator(UGit::Commit* commit) {
-	UGit::UCommitBagIterator::CommitBagIterator* commitBagIterator = new UGit::UCommitBagIterator::CommitBagIterator;
-	commitBagIterator->node = CreateNode(commit);
-	return commitBagIterator;
-}
-
 UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::Begin(UGit::CommitBag* bag) {
-	return bag->first;
+	CommitBagIterator* iterator = new CommitBagIterator;
+	iterator->node = bag->first;
+	return iterator;
 }
 
 void UGit::UCommitBagIterator::Next(CommitBagIterator * iterator) {
@@ -94,7 +99,7 @@ void UGit::UCommitBagIterator::Next(CommitBagIterator * iterator) {
 }
 
 bool UGit::UCommitBagIterator::IsEnd(const CommitBagIterator * iterator) {
-	return iterator->node == NULL ? true : false;
+		return iterator->node->next == NULL ? true : false;
 }
 
 UGit::Commit * UGit::UCommitBagIterator::GetCommit(CommitBagIterator * iterator) {

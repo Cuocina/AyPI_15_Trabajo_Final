@@ -50,8 +50,9 @@ Vertex* GetVertex(CommitGraph*  graph, string hashCode) {
 	while (iterator->next != NULL && contain==false) { // Recorro la primer lista
 		if (iterator->hashCode == hashCode) { // busco a source
 			contain = true;
+		}else{
+			iterator = iterator->next;
 		}
-		iterator = iterator->next;
 	}
 	
 	return iterator;
@@ -114,6 +115,8 @@ Commit* UGitCommitGraph::GetCommit(CommitGraph * graph, int indice){
 
 		return iterator->commit;
 	}
+
+	return NULL;
 }
 
 // Precondicion: @graph, @source y @destination son instancias validas

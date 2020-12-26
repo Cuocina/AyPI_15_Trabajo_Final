@@ -4,6 +4,7 @@
 #include "Cola.h"
 #include <string>
 #include <iostream>
+#include "CommitBag.h"
 
 using namespace UGitCommitGraph::AdyacencyListIterator;
 using namespace std;
@@ -13,6 +14,7 @@ using UGit::Commit;
 using UGitCola::Cola;
 using UGitCommitGraph::AdyacencyListIterator::Iterator;
 using std::string;
+using UGit::CommitBag;
 
 const int NoEstaMarcado = -1;
 
@@ -77,6 +79,13 @@ void BFS(UGitCommitGraph::CommitGraph* grafo, RecorridoAnchura* recorrido, Commi
 			}
 			UGitCommitGraph::AdyacencyListIterator::Next(iterador);
 		}
+		Commit* commit = UGitCommitGraph::AdyacencyListIterator::Get(iterador); // Obtengo el commit del nodo en el que estoy
+		int verticeAdyacente = ObtenerIndice(vectorCommit, commit); // obtengo el indice de ese commit en el vector de commit
+		if (recorrido->adyacenteA[verticeAdyacente] == NoEstaMarcado && verticeAdyacente != verticeOrigenRecorrido) {
+			UGitCola::Encolar(cola, verticeAdyacente);
+			recorrido->adyacenteA[verticeAdyacente] = verticeAVisitar;
+		}
+
 		//Destruir(iterador);
 	}
 

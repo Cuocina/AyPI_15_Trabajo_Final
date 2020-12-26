@@ -29,7 +29,7 @@ int main() {
 	AddHotFixes(git, "master");
 	AddAllDeveloperFeatureChanges(git, Features, 3);
 	PrepareRelease(git, head, featureBranches, 3);
-	UGit::LogGraph(git, "master", false);
+	UGit::LogGraph(git, "master", true);
 	//UGit::Destroy(head);
 	UGit::Destroy(git);
 	return 0;

@@ -40,8 +40,7 @@ string CreateHashCode() {
 
 UGit::Commit* UGit::CreateCommit(void* parents, string message) {
 	UGit::Commit* commit = new UGit::Commit;
-	commit->parents = UGit::CreateBag();
-	UGit::Add(commit->parents, (UGit::Commit*)parents);
+	commit->parents = (CommitBag*)parents;
 	commit->message = message;
 	commit->hashCode = CreateHashCode();
 	commit->context = UContext::GetNow();
