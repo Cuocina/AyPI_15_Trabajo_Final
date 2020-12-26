@@ -7,6 +7,7 @@
 #include <iostream>
 #include"CommitGraph.h"
 #include "RecorridoAnchura.h"
+#include "User.h"
 
 using namespace UGit;
 using namespace std;
@@ -105,10 +106,16 @@ NodoHook* GetLastestEventCommit(UGit::Git* git) {
 }
 
 void MostrarLargo(Commit* commit) {
+	cout << "Commit: ";
 	cout << UGit::GetHashCode(commit) << endl;
-	cout << UGit::GetAuthor(commit) << endl;
-	cout << UGit::GetDate(commit) << endl;
-	cout << UGit::GetMessage(commit) << endl;
+	cout << "Author: ";
+	UUser::User* user = UGit::GetAuthor(commit);
+	cout << UUser::GetNickName(user) << endl;
+	cout << endl;
+	cout << "Date: ";
+	cout << UGit::GetDate(commit) << endl<<endl;
+	cout << "     ";
+	cout << UGit::GetMessage(commit) << endl<<endl;
 }
 
 void MostrarCorto(Commit* commit) {

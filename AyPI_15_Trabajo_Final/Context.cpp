@@ -1,23 +1,27 @@
 #include "Context.h"
 #include "User.h"
 #include <random>
+#include <iostream>
+#include <string>
 
 using namespace UContext;
+using namespace std;
 using UUser::User;
+using std::string;
 
 UUser::User** InicialiceteUniqueInstance() {
-	string Features[5] = { "TonyStark", "SteveGrant", "Thor" ,"BruceBanner","PeterParker" };
-	UUser::User* uniqueInstance[5];
+	string Featur[5] = { "TonyStark", "SteveGrant", "Thor" ,"BruceBanner","PeterParker" };
+	UUser::User** unique = new UUser::User*[5];
 	for (int indice = 0; indice < 5; indice++)
-		uniqueInstance[indice] = UUser::CreateUser(Features[indice]);
-	
-	return uniqueInstance;
+		unique[indice] = UUser::CreateUser(Featur[indice]);
+
+	return unique;
 }
 
-UUser::User** uniqueInstance = InicialiceteUniqueInstance();
+UUser::User** ins = InicialiceteUniqueInstance();
 
 UUser::User* UContext::GetCurrentUser() {
-	return uniqueInstance[rand()%4];
+	return ins[rand()%5];
 }
 
 UDateTime::DateTime* UContext::GetNow() {
@@ -25,10 +29,10 @@ UDateTime::DateTime* UContext::GetNow() {
 }
 
 void UContext::DestroyContext() {
-	if (uniqueInstance != NULL) {
+	if (ins != NULL) {
 		for (int i= 0; i < 5; i++) {
-			UUser::DestroyUser(uniqueInstance[i]);
-			uniqueInstance = NULL;
+			UUser::DestroyUser(ins[i]);
+			ins  = NULL;
 		}
 	}
 }
