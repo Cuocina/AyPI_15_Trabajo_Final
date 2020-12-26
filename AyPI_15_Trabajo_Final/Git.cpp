@@ -28,14 +28,14 @@ struct ListaHooks {
 	NodoHook* first;
 };
 
-// Estructuras
+//Estructuras
 struct UGit::Git {
 	ListaHooks* gitEventsBranch;
 	ListaHooks* gitEventsCommit;
 	CommitGraph* graph;
 };
 
-// Funciones auxiliares
+//Funciones auxiliares
 ListaHooks* CreateGitEvents();
 NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next);
 void AddEvents(ListaHooks* gitEvents, Hook hook);
@@ -43,7 +43,12 @@ void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch);
 void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit);
 void MostrarCorto(Commit* commit);
 void MostrarLargo(Commit* commit);
+void FreeGarbageCollector();
 
+//Instancia Unica
+UGit::CommitBag* garbageCollector = UGit::CreateBag(); //Creo una bolsa de commits
+
+//Implementaciones Auxiliares
 ListaHooks* CreateGitEvents() {
 	ListaHooks* newEvent = new ListaHooks;
 	newEvent->first = NULL;
@@ -124,6 +129,20 @@ void MostrarCorto(Commit* commit) {
 	cout << UGit::GetMessage(commit) << endl;
 }
 
+void FreeGarbageCollector() {
+	if (garbageCollector != NULL) {
+		UGit::UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(garbageCollector);
+		while (!UGit::UCommitBagIterator::IsEnd(iterator)) {
+			Commit* commit = UGit::UCommitBagIterator::GetCommit(iterator);
+			UGit::DestroyCommit(commit);
+			UGit::UCommitBagIterator::Next(iterator);
+		}
+		UGit::UCommitBagIterator::DestroyIterator(iterator);
+		UGit::DestroyBag(garbageCollector);
+		garbageCollector = NULL;
+	}
+}
+
 // Implementaciones
 Git* UGit::CreateGit() {
 	UGit::Git* git = new UGit::Git;
@@ -163,6 +182,7 @@ Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 		UGitCommitGraph::Connect(git->graph, newCommit, UGit::GetLastCommit(UGit::Get(branchRegister, branchName)));
 		UGit::SetLastCommit(UGit::Get(branchRegister, branchName), newCommit);
 		RunHooks(git->gitEventsCommit, newCommit);
+		UGit::Add(garbageCollector, newCommit); // Agrego el commit a la bolsa cada vez que se crea
 		return newCommit;
 	}
 	
@@ -206,5 +226,6 @@ void UGit::LogGraph(Git * git, string branchName, bool oneLine){
 
 // Destroy
 void UGit::Destroy(Git * git) {
+	FreeGarbageCollector();
 	delete git;
 }
