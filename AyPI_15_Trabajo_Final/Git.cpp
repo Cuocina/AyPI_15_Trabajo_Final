@@ -8,6 +8,7 @@
 #include"CommitGraph.h"
 #include "RecorridoAnchura.h"
 #include "User.h"
+#include "DateTime.h"
 
 using namespace UGit;
 using namespace std;
@@ -111,15 +112,15 @@ void MostrarLargo(Commit* commit) {
 	cout << "Author: ";
 	UUser::User* user = UGit::GetAuthor(commit);
 	cout << UUser::GetNickName(user) << endl;
+	cout << "Date:   ";
+	cout << UDateTime::ToFormat(UGit::GetDate(commit), UDateTime::DateTimeFormat::MMM_DD_HHmmss_YYYY) << endl;
 	cout << endl;
-	cout << "Date: ";
-	cout << UGit::GetDate(commit) << endl<<endl;
-	cout << "     ";
+	cout << "        ";
 	cout << UGit::GetMessage(commit) << endl<<endl;
 }
 
 void MostrarCorto(Commit* commit) {
-	cout << UGit::GetShortHashCode(commit);
+	cout << UGit::GetShortHashCode(commit) + " ";
 	cout << UGit::GetMessage(commit) << endl;
 }
 

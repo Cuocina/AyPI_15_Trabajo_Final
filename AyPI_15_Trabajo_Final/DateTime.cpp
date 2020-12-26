@@ -3,9 +3,13 @@
 #include <ctime>
 #include <conio.h>
 #include "DateTime.h"
+#include <string>
+#include <cstdlib>
 
 using UDateTime::DateTime;
 using namespace std;
+
+string MonthToString(int numMont);
 
 struct UDateTime::DateTime {
 	int year;
@@ -41,6 +45,52 @@ int AddHour(int hour, int auxHour) {
 	return addHour;
 }
 
+string MonthToString(int numMont) {
+	string month;
+	switch (numMont){
+	case 1:
+		month = "Jan";
+		break;
+	case 2:
+		month = "Feb";
+		break;
+	case 3:
+		month = "Mar";
+		break;
+	case 4:
+		month = "Apr";
+		break;
+	case 5:
+		month = "May";
+		break;
+	case 6:
+		month = "Jun";
+		break;
+	case 7:
+		month = "Jul";
+		break;
+	case 8:
+		month = "Aug";
+		break;
+	case 9:
+		month = "Sep";
+		break;
+	case 10:
+		month = "Oct";
+		break;
+	case 11:
+		month = "Nov";
+		break;
+	case 12:
+		month = "Dec";
+		break;
+	default:
+		break;
+	}
+	return month;
+}
+
+//Implementaciones
 UDateTime::DateTime* UDateTime::Now() {
 	DateTime* dateTime = new DateTime;
 	struct tm newtime;
@@ -178,6 +228,16 @@ string UDateTime::ToFormat(const UDateTime::DateTime* dateTime, UDateTime::DateT
 		formattedDate += to_string(dateTime->hour) + ":";
 		formattedDate += to_string(dateTime->minutes) + ":";
 		formattedDate += to_string(dateTime->seconds) + ":";
+		break;
+	case MMM_DD_HHmmss_YYYY://MMM_DD_HHmmss_YYYY: Ago 27 19:01:10 2019
+		string monthAux = to_string(dateTime->month);
+		int numMonth = atoi(monthAux.c_str());
+		formattedDate += MonthToString(numMonth) + " ";
+		formattedDate += to_string(dateTime->day) + " ";
+		formattedDate += to_string(dateTime->hour) + ":";
+		formattedDate += to_string(dateTime->minutes) + ":";
+		formattedDate += to_string(dateTime->seconds) + " ";
+		formattedDate += to_string(dateTime->year);
 		break;
 	}
 	return formattedDate;

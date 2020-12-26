@@ -7,7 +7,7 @@ using std::string;
 
 namespace UDateTime {
 	struct DateTime;
-	enum DateTimeFormat { YYYYMMDD_HHmmss, YYYYMMDD_hhmmss, DDMMYYYY_hhmmss, DDMMYYYY_HHmmss, YYYYMMDDHHmmss, YYMD_Hms, YYMD_hms, DMYY_hms, DMYY_Hms };
+	enum DateTimeFormat { YYYYMMDD_HHmmss, YYYYMMDD_hhmmss, DDMMYYYY_hhmmss, DDMMYYYY_HHmmss, YYYYMMDDHHmmss, YYMD_Hms, YYMD_hms, DMYY_hms, DMYY_Hms, MMM_DD_HHmmss_YYYY };
 
 	// Precondicion: Ninguna
 	// Postcondicion: Devuelve una instancia válida de DateTime que representa la fecha y hora actual del sistema operativo.
