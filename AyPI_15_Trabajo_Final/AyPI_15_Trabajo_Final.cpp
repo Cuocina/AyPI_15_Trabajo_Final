@@ -4,7 +4,6 @@
 #include "Branch.h"
 #include "Commit.h"
 
-
 using std::string;
 using namespace std;
 
@@ -46,7 +45,6 @@ UGit::Git* BuildGitEnvironment() {
 	UGit::Git* git = UGit::CreateGit();
 	UGit::AddHook(git, UGit::GitEvent::NewBranchCreated, LogBranch);
 	UGit::AddHook(git, UGit::GitEvent::NewCommitAdded, LogCommit);
-
 	return git;
 }
 
@@ -55,7 +53,6 @@ Branch** CreateBranches(UGit::Git* git, Branch* baseBranch, string branchNames[]
 	for (int i = 0; i < 3; ++i) {
 		branches[i] = UGit::CreateBranch(git, branchNames[i], baseBranch);
 	}
-
 	return branches;
 }
 

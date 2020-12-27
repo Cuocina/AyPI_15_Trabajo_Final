@@ -98,7 +98,7 @@ UDateTime::DateTime* UDateTime::Now() {
 	DateTime* dateTime = new DateTime;
 	struct tm newtime;
 	time_t now = time(NULL);
-	lastestTime = lastestTime + now / 20000;
+	lastestTime = lastestTime + now / 10000;
 	localtime_s(&newtime, &lastestTime);
 	dateTime->year = 1900 + newtime.tm_year;
 	dateTime->month = 1 + newtime.tm_mon;

@@ -18,14 +18,14 @@ using std::string;
 using UGitTravelWidth::TravelWidth;
 
 // Estructuras Auxiliares
-struct NodoHook {
+struct NodeHook {
 	UGit::Hook hook;
-	NodoHook* next;
+	NodeHook* next;
 };
 
 struct ListaHooks {
 	UGit::GitEvent nameColection;
-	NodoHook* first;
+	NodeHook* first;
 };
 
 //Estructuras
@@ -37,16 +37,18 @@ struct UGit::Git {
 
 //Funciones auxiliares
 ListaHooks* CreateGitEvents();
-NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next);
+NodeHook* CreateEvent(UGit::Hook hook, NodeHook* next);
+bool IsEmpty(ListaHooks* gitEvents);
+NodeHook* CreateNodeHook(Hook hook);
+void AddToStart(ListaHooks* gitEvents, NodeHook* hook, NodeHook* next);
 void AddEvents(ListaHooks* gitEvents, Hook hook);
-void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch);
-void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit);
+void RunHooks(ListaHooks* gitEvents, void* event);
 void ShowShort(Commit* commit);
 void ShowLargue(Commit* commit);
 void FreeGarbageCollector();
 
 //Instancia Unica
-UGit::CommitBag* garbageCollector = UGit::CreateBag(); //Creo una bolsa de commits
+UGit::CommitBag* garbageCollector = UGit::CreateBag(); 
 
 ListaHooks* CreateGitEvents() {
 	ListaHooks* newEvent = new ListaHooks;
@@ -54,77 +56,63 @@ ListaHooks* CreateGitEvents() {
 	return newEvent;
 }
 
-NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next) {
-	NodoHook* event = new NodoHook;
+NodeHook* CreateEvent(UGit::Hook hook, NodeHook* next) {
+	NodeHook* event = new NodeHook;
 	event->hook = hook;
 	event->next = next;
 	return event;
 }
 
+bool IsEmpty(ListaHooks* gitEvents) {
+	return gitEvents->first == NULL;
+}
+
+NodeHook* CreateNodeHook(Hook hook) {
+	NodeHook* newNode = new NodeHook;
+	newNode->hook = hook;
+	newNode->next = NULL;
+	return newNode;
+}
+
+void AddToStart(ListaHooks* gitEvents, NodeHook* hook, NodeHook* next) {
+	gitEvents->first = hook;
+	gitEvents->first->next = next;
+}
+
 void AddEvents(ListaHooks* gitEvents, Hook hook) {
-	NodoHook* iterator = gitEvents->first;
-	if (iterator != NULL) {
-		while (iterator->next != NULL) {
-			iterator = iterator->next;
-		}
-		iterator->next = CreateEvent(hook, NULL);
+	if (IsEmpty(gitEvents)) {
+		gitEvents->first = CreateNodeHook(hook);
 	}
 	else {
-		gitEvents->first = CreateEvent(hook, NULL);
+		AddToStart(gitEvents, CreateNodeHook(hook), gitEvents->first);
 	}
 }
 
-void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit) {
-	NodoHook* iterator = gitEvents->first;
+void RunHooks(ListaHooks* gitEvents, void* event) {
+	NodeHook* iterator = gitEvents->first;
 	while (iterator->next != NULL) {
 		if (iterator->hook != NULL)
-			iterator->hook(commit);
+			iterator->hook(event);
 		iterator = iterator->next;
 	}
-	iterator->hook(commit);
-}
-
-void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch) {
-	NodoHook* iterator = gitEvents->first;
-	while (iterator->next != NULL) {
-		if (iterator->hook != NULL)
-			iterator->hook(branch);
-		iterator = iterator->next;
-	}
-	iterator->hook(branch);
-}
-
-NodoHook* GetLastestEventBranch(UGit::Git* git) {
-	NodoHook* iterator = git->gitEventsBranch->first;
-	while (iterator->next != NULL) {
-		iterator = iterator->next;
-	}
-	return iterator;
-}
-
-NodoHook* GetLastestEventCommit(UGit::Git* git) {
-	NodoHook* iterator = git->gitEventsCommit->first;
-	while (iterator->next != NULL) {
-		iterator = iterator->next;
-	}
-	return iterator;
+	iterator->hook(event);
 }
 
 void ShowLargue(Commit* commit) {
-	cout << "Commit: ";
+	cout << "* \t Commit: ";
 	cout << UGit::GetHashCode(commit) << endl;
-	cout << "Author: ";
+	cout << " | \t Author: ";
 	UUser::User* user = UGit::GetAuthor(commit);
 	cout << UUser::GetNickName(user) << endl;
-	cout << "Date:   ";
+	cout << " | \t Date:   ";
 	cout << UDateTime::ToFormat(UGit::GetDate(commit), UDateTime::DateTimeFormat::MMM_DD_HHmmss_YYYY) << endl;
-	cout << endl;
-	cout << "        ";
+	cout <<" | \t"<< endl;
+	cout << " | \t        ";
 	cout << UGit::GetMessage(commit) << endl<<endl;
 }
 
 void ShowShort(Commit* commit) {
-	cout << UGit::GetShortHashCode(commit) + " ";
+	cout <<"*| \t"<< UGit::GetShortHashCode(commit) + " ";
 	cout << UGit::GetMessage(commit) << endl;
 }
 
@@ -157,7 +145,7 @@ Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
 	if (!UGit::Contains(branchRegister, branchName)) {
 		newBranch = baseBranch == NULL ? UGit::CreateBranch(branchName, NULL) : UGit::CreateBranch(branchName, UGit::GetLastCommit(baseBranch));
 		UGit::Add(branchRegister, newBranch);
-		RunHooks(git->gitEventsBranch, newBranch);
+		RunHooks(git->gitEventsBranch,(UGit::Branch*)newBranch);
 	}
 	return newBranch;
 }
@@ -172,14 +160,14 @@ void UGit::DeleteBranch(Git * git, string branchName) {
 
 Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 	UGit::BranchRegister* branchRegister = UGit::GetBranchRegister();
-	Commit* newCommit=NULL;
+	Commit* newCommit = NULL;
 	if (UGit::Contains(branchRegister, branchName)) {
 		CommitBag* parents = CreateBagCommit(UGit::GetLastCommit(UGit::Get(branchRegister, branchName)));
 		newCommit = UGit::CreateCommit(parents, message);
 		UGitCommitGraph::Connect(git->graph, newCommit, UGit::GetLastCommit(UGit::Get(branchRegister, branchName)));
 		UGit::SetLastCommit(UGit::Get(branchRegister, branchName), newCommit);
-		RunHooks(git->gitEventsCommit, newCommit);
-		UGit::Add(garbageCollector, newCommit); // Agrega el commit a la bolsa cada vez que se crea
+		RunHooks(git->gitEventsCommit,(UGit::Commit*)newCommit);
+		UGit::Add(garbageCollector, newCommit); 
 	}
 	return newCommit;
 }
@@ -207,9 +195,9 @@ void UGit::Merge(Git* git, string from, string to) {
 }
 
 void UGit::LogGraph(Git * git, string branchName, bool oneLine){
-	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) { // Mira si tiene el branch en el register
-		Branch* branch = Get(UGit::GetBranchRegister(), branchName); // Obtiene el branch con ese nombra
-		Commit* lastestCommit = UGit::GetLastCommit(branch); // Obtiene el commit de ese branch
+	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) { 
+		Branch* branch = Get(UGit::GetBranchRegister(), branchName); 
+		Commit* lastestCommit = UGit::GetLastCommit(branch); 
 		if (oneLine == true) {
 			UGitTravelWidth::Create(git->graph, lastestCommit, ShowShort);
 		}else {

@@ -28,7 +28,6 @@ struct UGitCommitGraph::CommitGraph {
 bool TraverseAdyacency(CommitBag* adyacency, Commit* destination); // Recorrer Bolsa Para buscar el commit
 void  CreateVertex(CommitGraph* graph, Commit* commit);
 bool InTheGraph(CommitGraph* graph, Commit* source);
-Vertex* GetLastestVertex(CommitGraph* graph);
 
 bool TraverseAdyacency(CommitBag* adjacencies, Commit* destination) { 
 	bool contain = false;
@@ -74,14 +73,6 @@ bool InTheGraph(CommitGraph* graph, Commit* source) {
 	return contain;
 }
 
-Vertex* GetLastestVertex(CommitGraph* graph) {
-	Vertex* iterator = graph->first;
-	while (iterator->next != NULL) {
-		iterator = iterator->next;
-	}
-	return iterator;
-}
-
 // Implementaciones:
 CommitGraph * UGitCommitGraph::Create() {
 	CommitGraph* graph = new CommitGraph;
@@ -90,7 +81,7 @@ CommitGraph * UGitCommitGraph::Create() {
 	return graph;
 }
 
-Commit** UGitCommitGraph::CreateVector(CommitGraph* graph) {
+Commit** UGitCommitGraph::CreateVertexCommit(CommitGraph* graph) {
 	int countVertex = UGitCommitGraph::CountVertex(graph);
 	Commit** vector = new Commit*[countVertex];
 	for (int index = 0; index < countVertex; index++) {
@@ -203,5 +194,3 @@ void UGitCommitGraph::Destroy(CommitGraph* graph) {
 		delete toDelete;
 	}
 }
-
-

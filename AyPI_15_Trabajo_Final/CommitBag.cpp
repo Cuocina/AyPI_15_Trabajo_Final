@@ -14,6 +14,7 @@ struct CommitBagNode {
 // Estructuras:
 struct UGit::CommitBag {
 	CommitBagNode* first;
+	int counter;
 };
 
 struct UGit::UCommitBagIterator::CommitBagIterator {
@@ -21,18 +22,9 @@ struct UGit::UCommitBagIterator::CommitBagIterator {
 };
 
 // Funciones Auxiliares:
-UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag);
 CommitBagNode* CreateNode(Commit* commit);
 bool IsEmpty(CommitBag* bag);
-
-UGit::UCommitBagIterator::CommitBagIterator* GetLatestCommit(UGit::CommitBag* bag) {
-	UGit::UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(bag);
-	if (!IsEmpty(bag)) {
-		while (!IsEnd(iterator))
-			Next(iterator);
-	}
-	return iterator;
-}
+void AddToStart(CommitBag* bag, CommitBagNode* node, CommitBagNode* next);
 
 CommitBagNode* CreateNode(Commit* commit) {
 	CommitBagNode* node = new CommitBagNode;
@@ -43,6 +35,11 @@ CommitBagNode* CreateNode(Commit* commit) {
 
 bool IsEmpty(CommitBag* bag) {
 	return bag->first == NULL;
+}
+
+void AddToStart(CommitBag* bag, CommitBagNode* node, CommitBagNode* next) {
+	bag->first = node;
+	bag->first->next = next;
 }
 
 // Implementaciones
@@ -69,27 +66,18 @@ CommitBag* UGit::Clone(CommitBag* bag) {
 	return newBag;
 }
 
-void UGit::Add(UGit::CommitBag * bag, void* commit) {
+void UGit::Add(UGit::CommitBag* bag, void* commit) {
 	if (IsEmpty(bag)) {
 		bag->first = CreateNode((UGit::Commit*)commit);
 	}
 	else {
-		UGit::UCommitBagIterator::CommitBagIterator* iterator = GetLatestCommit(bag);
-		iterator->node->next = CreateNode((UGit::Commit*)commit);
+		AddToStart(bag, CreateNode((UGit::Commit*)commit), bag->first);
 	}
+	bag->counter++;
 }
 
 int UGit::Count(CommitBag * bag) {
-	int total = 0;
-	if (!IsEmpty(bag)) {
-		UCommitBagIterator::CommitBagIterator* iterator = UGit::UCommitBagIterator::Begin(bag);
-		total++;
-		while (!IsEnd(iterator)) {
-			Next(iterator);
-			total++;
-		}
-	}
-	return total;
+	return bag->counter;
 }
 
 UGit::UCommitBagIterator::CommitBagIterator* UGit::UCommitBagIterator::Begin(UGit::CommitBag* bag) {

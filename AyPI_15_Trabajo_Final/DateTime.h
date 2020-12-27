@@ -62,5 +62,3 @@ namespace UDateTime {
 }
 
 #endif
-
-

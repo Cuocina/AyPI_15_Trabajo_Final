@@ -13,7 +13,7 @@ namespace UGitCommitGraph {
 
 	// Precondicion: Ninguna
 	// Postcondicion:: Crea un vector de commits a partir de un grafo
-	Commit** CreateVector(CommitGraph* graph);
+	Commit** CreateVertexCommit(CommitGraph* graph);
 
 	// Precondición: @grafo es una instancia valida
 	// Postcondición: Devuelve la cantidad de vertices del grafo
@@ -48,4 +48,3 @@ namespace UGitCommitGraph {
 }
 
 #endif
-
