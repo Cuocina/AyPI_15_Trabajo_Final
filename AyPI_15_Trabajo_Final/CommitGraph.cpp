@@ -97,10 +97,29 @@ CommitGraph * UGitCommitGraph::Create() {
 	return graph;
 }
 
+Commit** UGitCommitGraph::CrearVector(CommitGraph* grafo) {
+	int cantidadVertices = UGitCommitGraph::CountVertex(grafo);
+	Commit** vector = new Commit*[cantidadVertices];
+	for (int indice = 0; indice < cantidadVertices; indice++) {
+		vector[indice] = UGitCommitGraph::GetCommit(grafo, indice);
+	}
+
+	return vector;
+}
+
 // Precondición: @grafo es una instancia valida
 // Postcondición: Devuelve la cantidad de vertices del grafo
 int UGitCommitGraph::CountVertex(CommitGraph* grafo) {
 	return grafo->count;
+}
+
+int UGitCommitGraph::IndexOf(Commit** vectorCommits, Commit* comienzo) {
+	int indice = 0;
+	while (vectorCommits[indice] != comienzo) {
+		indice++;
+	}
+
+	return indice;
 }
 
 Commit* UGitCommitGraph::GetCommit(CommitGraph * graph, int indice){

@@ -11,10 +11,18 @@ namespace UGitCommitGraph {
 	// Postcondicion: Crear un grafo vacio
 	CommitGraph* Create();
 
+	// Precondicion: Ninguna
+	// Postcondicion:: Crea un vector de commits a partir de un grafo
+	Commit** CrearVector(CommitGraph* grafo);
+
 	// Funciones Agregadas:
 	// Precondición: @grafo es una instancia valida
 	// Postcondición: Devuelve la cantidad de vertices del grafo
 	int CountVertex(CommitGraph* grafo);
+
+	// Precondición: Ninguna
+	// Postcondición:: Devuelve el indice del vector @vectorCommits donde se encuentra el valor @comienzo
+	int IndexOf(Commit** vectorCommits, Commit* comienzo);
 
 	// Precondición: @grafo es una instancia valida.
 	// Postcondición: Devuelve el Commit de @grafo en la posición indicada

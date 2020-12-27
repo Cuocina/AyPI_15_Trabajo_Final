@@ -26,30 +26,9 @@ struct URGRecorridoAnchura::RecorridoAnchura {
 };
 
 //Funciones Auxiliares
-Commit** CrearVector(CommitGraph* grafo);
-int ObtenerIndice(Commit** vectorCommits, Commit* comienzo);
 void Inicializar(bool* visitados, int cantidad);
 
 //Implemetaciones Auxiliares
-Commit** CrearVector(CommitGraph* grafo) {
-	int cantidadVertices = UGitCommitGraph::CountVertex(grafo);
-	Commit** vector = new Commit*[cantidadVertices];
-	for (int indice = 0; indice < cantidadVertices; indice++) {
-		vector[indice] = UGitCommitGraph::GetCommit(grafo, indice);
-	}
-
-	return vector;
-}
-
-int ObtenerIndice(Commit** vectorCommits, Commit* comienzo) {
-	int indice = 0;
-	while (vectorCommits[indice] != comienzo) {
-		indice++;
-	}
-
-	return indice;
-}
-
 void Inicializar(bool* visitados, int cantidad) {
 	for (int i = 0; i < cantidad; ++i) {
 		visitados[i] = false;
@@ -72,7 +51,7 @@ void BFS(UGitCommitGraph::CommitGraph* grafo, RecorridoAnchura* recorrido, Commi
 		Iterator* iterador = UGitCommitGraph::AdyacencyListIterator::Comienzo(grafo, UGit::GetHashCode(vectorCommit[verticeAVisitar])); //Obtengo el primer nodo de la bolsa
 		while (!UGitCommitGraph::AdyacencyListIterator::End(iterador)) { // me fijo si no se termino la bolsa (es decir iterator = NULL)
 			Commit* commit = UGitCommitGraph::AdyacencyListIterator::Get(iterador); // Obtengo el commit del nodo en el que estoy
-			int verticeAdyacente = ObtenerIndice(vectorCommit, commit); // obtengo el indice de ese commit en el vector de commit
+			int verticeAdyacente = UGitCommitGraph::IndexOf(vectorCommit, commit); // obtengo el indice de ese commit en el vector de commit
 			if (recorrido->adyacenteA[verticeAdyacente] == NoEstaMarcado && verticeAdyacente != verticeOrigenRecorrido) {
 				UGitCola::Encolar(cola, verticeAdyacente);
 				recorrido->adyacenteA[verticeAdyacente] = verticeAVisitar;
@@ -80,7 +59,7 @@ void BFS(UGitCommitGraph::CommitGraph* grafo, RecorridoAnchura* recorrido, Commi
 			UGitCommitGraph::AdyacencyListIterator::Next(iterador);
 		}
 		Commit* commit = UGitCommitGraph::AdyacencyListIterator::Get(iterador); // Obtengo el commit del nodo en el que estoy
-		int verticeAdyacente = ObtenerIndice(vectorCommit, commit); // obtengo el indice de ese commit en el vector de commit
+		int verticeAdyacente = UGitCommitGraph::IndexOf(vectorCommit, commit); // obtengo el indice de ese commit en el vector de commit
 		if (recorrido->adyacenteA[verticeAdyacente] == NoEstaMarcado && verticeAdyacente != verticeOrigenRecorrido) {
 			UGitCola::Encolar(cola, verticeAdyacente);
 			recorrido->adyacenteA[verticeAdyacente] = verticeAVisitar;
@@ -100,8 +79,8 @@ void Inicializar(int vector[], int cantidadElementos, int valor) {
 
 RecorridoAnchura* URGRecorridoAnchura::Crear(CommitGraph* grafo, Commit* comienzo, TipoVisitar visitar) {
 	int cantidadVertices = UGitCommitGraph::CountVertex(grafo);// Obtener cantidad de commits del grafo
-	Commit** vectorCommits  = CrearVector (grafo); // Creo un vector de Commits ordenados como la lista azul
-	int indiceComienzo = ObtenerIndice(vectorCommits, comienzo);	// Ver en que posicion está el commit del comienzo 
+	Commit** vectorCommits  = UGitCommitGraph::CrearVector (grafo); // Creo un vector de Commits ordenados como la lista azul
+	int indiceComienzo = UGitCommitGraph::IndexOf(vectorCommits, comienzo);	// Ver en que posicion está el commit del comienzo 
 	RecorridoAnchura* bfs = new RecorridoAnchura; // Creo un nuevo recorrido
 	bfs->visitar = visitar; // Le asigno la funcion pasada por parametro
 	bfs->adyacenteA = new int[cantidadVertices]; // Creo un vector (diccionario) - donde la posicion es la del vertice, y el valor es de donde vino (su hijo)
