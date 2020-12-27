@@ -6,7 +6,7 @@
 #include <string>
 #include <iostream>
 #include"CommitGraph.h"
-#include "RecorridoAnchura.h"
+#include "TravelWidth.h"
 #include "User.h"
 #include "DateTime.h"
 
@@ -15,7 +15,7 @@ using namespace std;
 using UCommitBagIterator::CommitBagIterator;
 using UGitCommitGraph::CommitGraph;
 using std::string;
-using URGRecorridoAnchura::RecorridoAnchura;
+using UGitTravelWidth::TravelWidth;
 
 // Estructuras Auxiliares
 struct NodoHook {
@@ -41,14 +41,13 @@ NodoHook* CreateEvent(UGit::Hook hook, NodoHook* next);
 void AddEvents(ListaHooks* gitEvents, Hook hook);
 void RunHooks(ListaHooks* gitEvents, UGit::Branch* branch);
 void RunHooks(ListaHooks* gitEvents, UGit::Commit* commit);
-void MostrarCorto(Commit* commit);
-void MostrarLargo(Commit* commit);
+void ShowShort(Commit* commit);
+void ShowLargue(Commit* commit);
 void FreeGarbageCollector();
 
 //Instancia Unica
 UGit::CommitBag* garbageCollector = UGit::CreateBag(); //Creo una bolsa de commits
 
-//Implementaciones Auxiliares
 ListaHooks* CreateGitEvents() {
 	ListaHooks* newEvent = new ListaHooks;
 	newEvent->first = NULL;
@@ -111,7 +110,7 @@ NodoHook* GetLastestEventCommit(UGit::Git* git) {
 	return iterator;
 }
 
-void MostrarLargo(Commit* commit) {
+void ShowLargue(Commit* commit) {
 	cout << "Commit: ";
 	cout << UGit::GetHashCode(commit) << endl;
 	cout << "Author: ";
@@ -124,7 +123,7 @@ void MostrarLargo(Commit* commit) {
 	cout << UGit::GetMessage(commit) << endl<<endl;
 }
 
-void MostrarCorto(Commit* commit) {
+void ShowShort(Commit* commit) {
 	cout << UGit::GetShortHashCode(commit) + " ";
 	cout << UGit::GetMessage(commit) << endl;
 }
@@ -149,7 +148,6 @@ Git* UGit::CreateGit() {
 	git->gitEventsBranch = CreateGitEvents();
 	git->gitEventsCommit = CreateGitEvents();
 	git->graph = UGitCommitGraph::Create();
-
 	return git; 
 }
 
@@ -165,7 +163,6 @@ Branch * UGit::CreateBranch(Git * git, string branchName, Branch * baseBranch) {
 }
 
 void UGit::DeleteBranch(Git * git, string branchName) {
-	
 	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) {
 		UGit::Branch* toDelete = UGit::Get(UGit::GetBranchRegister(), branchName);
 		UGit::Remove(UGit::GetBranchRegister(), branchName);
@@ -182,10 +179,8 @@ Commit* UGit::NewCommit(Git* git, string branchName, string message) {
 		UGitCommitGraph::Connect(git->graph, newCommit, UGit::GetLastCommit(UGit::Get(branchRegister, branchName)));
 		UGit::SetLastCommit(UGit::Get(branchRegister, branchName), newCommit);
 		RunHooks(git->gitEventsCommit, newCommit);
-		UGit::Add(garbageCollector, newCommit); // Agrego el commit a la bolsa cada vez que se crea
-		return newCommit;
+		UGit::Add(garbageCollector, newCommit); // Agrega el commit a la bolsa cada vez que se crea
 	}
-	
 	return newCommit;
 }
 
@@ -212,19 +207,17 @@ void UGit::Merge(Git* git, string from, string to) {
 }
 
 void UGit::LogGraph(Git * git, string branchName, bool oneLine){
-	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) { // Miramos si tenemos el branch en el register
-		Branch* branch = Get(UGit::GetBranchRegister(), branchName); // obtengo el branch con ese nombra
-		Commit* lastestCommit = UGit::GetLastCommit(branch); // obtnego el commit de ese branch
+	if (UGit::Contains(UGit::GetBranchRegister(), branchName)) { // Mira si tiene el branch en el register
+		Branch* branch = Get(UGit::GetBranchRegister(), branchName); // Obtiene el branch con ese nombra
+		Commit* lastestCommit = UGit::GetLastCommit(branch); // Obtiene el commit de ese branch
 		if (oneLine == true) {
-			URGRecorridoAnchura::Crear(git->graph, lastestCommit, MostrarCorto);// Crear Recorrido con (graph, ultimo commit del branch, funcion mostrar(online))
-		}
-		else {
-			URGRecorridoAnchura::Crear(git->graph, lastestCommit, MostrarLargo);// Crear Recorrido con (graph, ultimo commit del branch, funcion mostrar(online))
+			UGitTravelWidth::Create(git->graph, lastestCommit, ShowShort);
+		}else {
+			UGitTravelWidth::Create(git->graph, lastestCommit, ShowLargue);
 		}
 	}
 }
 
-// Destroy
 void UGit::Destroy(Git * git) {
 	FreeGarbageCollector();
 	delete git;

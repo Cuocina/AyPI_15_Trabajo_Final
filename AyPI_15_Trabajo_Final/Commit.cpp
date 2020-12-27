@@ -24,6 +24,7 @@ struct UGit::Commit {
 
 //Funciones auxiliares
 bool RandomSecuencyInitialized = false;
+string CreateHashCode();
 
 string CreateHashCode() {
 	string hashCode;
@@ -38,6 +39,7 @@ string CreateHashCode() {
 	return hashCode;
 }
 
+// Implementaciones
 UGit::Commit* UGit::CreateCommit(void* parents, string message) {
 	UGit::Commit* commit = new UGit::Commit;
 	commit->parents = (CommitBag*)parents;

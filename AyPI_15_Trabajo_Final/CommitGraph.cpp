@@ -2,7 +2,6 @@
 #include "Commit.h"
 #include "CommitBag.h"
 #include <string.h>
-#include <iostream>
 
 using UGit::Commit;
 using UGit::CommitBag;
@@ -26,35 +25,32 @@ struct UGitCommitGraph::CommitGraph {
 };
 
 //Funciones Auxiliares
-bool RecorrerAdyacencias(CommitBag* adyacencias, Commit* destination);
+bool TraverseAdyacency(CommitBag* adyacency, Commit* destination); // Recorrer Bolsa Para buscar el commit
 void  CreateVertex(CommitGraph* graph, Commit* commit);
 bool InTheGraph(CommitGraph* graph, Commit* source);
 Vertex* GetLastestVertex(CommitGraph* graph);
 
-//Implementaciones Auxiliares
-bool RecorrerAdyacencias(CommitBag* adyacencias, Commit* destination) { // Recorrer Bolsa Para buscar el commit
+bool TraverseAdyacency(CommitBag* adjacencies, Commit* destination) { 
 	bool contain = false;
-	CommitBagIterator* iteratorAdyacncy = UGit::UCommitBagIterator::Begin(adyacencias); // creo un iterador de commit bag, y le asigno el primero de la bolsa
-	while (!UGit::UCommitBagIterator::IsEnd(iteratorAdyacncy) && contain != true) { // mientras no sea el ultimo elemento de la bolsa y no se haya encontrado el commit
-		contain = UGit::UCommitBagIterator::GetCommit(iteratorAdyacncy) == destination ? true : contain; // Comparo si el iterador llego al commit buscado
-		UGit::UCommitBagIterator::Next(iteratorAdyacncy); // Avanzo el iterador de la bolsa
+	CommitBagIterator* iteratorAdyacency = UGit::UCommitBagIterator::Begin(adjacencies); // Crea un iterador de commitbag, y le asigna el primero de la bolsa
+	while (!UGit::UCommitBagIterator::IsEnd(iteratorAdyacency) && contain != true) { // Mientras no sea el ultimo elemento de la bolsa y no se haya encontrado el commit
+		contain = UGit::UCommitBagIterator::GetCommit(iteratorAdyacency) == destination ? true : contain; // Compara si el iterador llego al commit buscado
+		UGit::UCommitBagIterator::Next(iteratorAdyacency); // Avanzo el iterador de la bolsa
 	}
-	contain = UGit::UCommitBagIterator::GetCommit(iteratorAdyacncy) == destination ? true : contain; // Comparo si el iterador llego al commit buscado
-
+	contain = UGit::UCommitBagIterator::GetCommit(iteratorAdyacency) == destination ? true : contain; // Comparo si el iterador llego al commit buscado
 	return contain;
 }
 
 Vertex* GetVertex(CommitGraph*  graph, string hashCode) {
-	Vertex* iterator = graph->first; // Obtengo el primero vertice del grafo
+	Vertex* iterator = graph->first; // Obtiene el primer vertice del grafo
 	bool contain = false;
-	while (iterator != NULL && contain==false) { // Recorro la primer lista
-		if (iterator->hashCode == hashCode) { // busco a source
+	while (iterator != NULL && contain==false) { // Recorre la primer lista
+		if (iterator->hashCode == hashCode) { // Busca a source
 			contain = true;
 		}else{
 			iterator = iterator->next;
 		}
 	}
-	
 	return iterator;
 }
 
@@ -65,7 +61,7 @@ void CreateVertex(CommitGraph* graph, Commit* commit) {
 	vertex->hashCode = UGit::GetHashCode(commit);
 	vertex->next = graph->first;
 	graph->first = vertex;
-	graph->count++; // aumento la cantidad de vertices
+	graph->count++;
 }
 
 bool InTheGraph(CommitGraph* graph, Commit* source) {
@@ -75,7 +71,6 @@ bool InTheGraph(CommitGraph* graph, Commit* source) {
 		contain = iterator->hashCode == UGit::GetHashCode(source)?true:contain;
 		iterator = iterator->next;
 	}
-
 	return contain;
 }
 
@@ -84,7 +79,6 @@ Vertex* GetLastestVertex(CommitGraph* graph) {
 	while (iterator->next != NULL) {
 		iterator = iterator->next;
 	}
-
 	return iterator;
 }
 
@@ -93,53 +87,43 @@ CommitGraph * UGitCommitGraph::Create() {
 	CommitGraph* graph = new CommitGraph;
 	graph->first = NULL;
 	graph->count = 0;
-
 	return graph;
 }
 
-Commit** UGitCommitGraph::CrearVector(CommitGraph* grafo) {
-	int cantidadVertices = UGitCommitGraph::CountVertex(grafo);
-	Commit** vector = new Commit*[cantidadVertices];
-	for (int indice = 0; indice < cantidadVertices; indice++) {
-		vector[indice] = UGitCommitGraph::GetCommit(grafo, indice);
+Commit** UGitCommitGraph::CreateVector(CommitGraph* graph) {
+	int countVertex = UGitCommitGraph::CountVertex(graph);
+	Commit** vector = new Commit*[countVertex];
+	for (int index = 0; index < countVertex; index++) {
+		vector[index] = UGitCommitGraph::GetCommit(graph, index);
 	}
-
 	return vector;
 }
 
-// Precondición: @grafo es una instancia valida
-// Postcondición: Devuelve la cantidad de vertices del grafo
-int UGitCommitGraph::CountVertex(CommitGraph* grafo) {
-	return grafo->count;
+int UGitCommitGraph::CountVertex(CommitGraph* graph) {
+	return graph->count;
 }
 
-int UGitCommitGraph::IndexOf(Commit** vectorCommits, Commit* comienzo) {
-	int indice = 0;
-	while (vectorCommits[indice] != comienzo) {
-		indice++;
+int UGitCommitGraph::IndexOf(Commit** vectorCommits, Commit* begin) {
+	int index = 0;
+	while (vectorCommits[index] != begin) {
+		index++;
 	}
-
-	return indice;
+	return index;
 }
 
-Commit* UGitCommitGraph::GetCommit(CommitGraph * graph, int indice){
-	if (indice < graph->count) { // valido el indice (si hay un vertice, el indice es 0 pero la cantidad de vertices es 1)
-		Vertex* iterator = graph->first; // obtengo el primer vertice de la lista azul
+Commit* UGitCommitGraph::GetCommit(CommitGraph * graph, int index){
+	if (index < graph->count) { // Valida el indice (si hay un vertice, el indice es 0 pero la cantidad de vertices es 1)
+		Vertex* iterator = graph->first; // Obtiene el primer vertice de la lista principal
 		int count = 0;
-		while (count != indice) { // voy adelantando el iterador hasta llegar a la posicion indicada
+		while (count != index) { // Adelanta el iterador hasta llegar a la posicion indicada
 			count++;
 			iterator = iterator->next;
 		}
-
 		return iterator->commit;
 	}
-
 	return NULL;
 }
 
-// Precondicion: @graph, @source y @destination son instancias validas
-// Postcondicion: Si @source y @destination ya estan conectados no realiza ningun accion.
-// Si @source y @destintion no estan conectados realiza una conexion directa (no conmutativa) con origen en @source y destino en @destination
 void UGitCommitGraph::Connect(CommitGraph * graph, Commit * source, Commit * destination){
 	if (graph->first==NULL) {
 		CreateVertex(graph, source);
@@ -149,10 +133,10 @@ void UGitCommitGraph::Connect(CommitGraph * graph, Commit * source, Commit * des
 	}
 	else {
 		if (InTheGraph(graph, source)) {
-			if (!UGitCommitGraph::AreConnected(graph, source, destination)) { // si no están conectados
-				string hashCode = UGit::GetHashCode(source); //obtengo el hashcode de source
-				Vertex* vertex = GetVertex(graph, hashCode); // busco el vertice de source
-				UGit::Add(vertex->adyacency, destination); // Agrego a los padres de source el destination
+			if (!UGitCommitGraph::AreConnected(graph, source, destination)) { // Si no están conectados
+				string hashCode = UGit::GetHashCode(source); // Obtiene el hashcode de source
+				Vertex* vertex = GetVertex(graph, hashCode); // Busca el vertice de source
+				UGit::Add(vertex->adyacency, destination); // Agrega a los padres de source el destination
 			}
 		}
 		else {
@@ -166,11 +150,9 @@ void UGitCommitGraph::Connect(CommitGraph * graph, Commit * source, Commit * des
 
 bool UGitCommitGraph::AreConnected(CommitGraph* graph, Commit* source, Commit* destination) {
 	bool connected = false;
-	string hashCode = UGit::GetHashCode(source);	// Obtengo la clave de source
-	Vertex* vertex = GetVertex(graph, hashCode); // Busco el vertice con esa clave
-
-
-	return connected = RecorrerAdyacencias(vertex->adyacency, destination); // si encuentro a source, me fijo si tiene a destination en sus adyacencias
+	string hashCode = UGit::GetHashCode(source);	// Obtiene la clave de source
+	Vertex* vertex = GetVertex(graph, hashCode); // Busca el vertice con esa clave
+	return connected = TraverseAdyacency(vertex->adyacency, destination); // Si encuentro a source, se fija si tiene a destination en sus adyacencias
 }
 
 // AdyanceyListIterator
@@ -182,20 +164,17 @@ struct Iterator {
 //Función Creacional Auxiliar
 Iterator* CreateIterator();
 
-// Implementación Creacional Auxiliar
 Iterator* CreateIterator() {
 	Iterator* iterator = new Iterator;
 	iterator->adyacency = NULL;
-
 	return iterator;
 }
 
 //Implementaciones
-Iterator* UGitCommitGraph::AdyacencyListIterator::Comienzo(CommitGraph * graph, string commitHashCode){
+Iterator* UGitCommitGraph::AdyacencyListIterator::Begin(CommitGraph * graph, string commitHashCode){
 	Iterator * iterator = CreateIterator();
 	Vertex* vertex = GetVertex(graph, commitHashCode);// Busca el vertice por su hashcode
 	iterator->adyacency= UGit::UCommitBagIterator::Begin(vertex->adyacency);
-	
 	return iterator;
 }
 
@@ -211,7 +190,6 @@ void UGitCommitGraph::AdyacencyListIterator::Next(Iterator* iterator) {
 	UGit::UCommitBagIterator::Next(iterator->adyacency);
 }
 
-//Destroys 
 void  UGitCommitGraph::AdyacencyListIterator::Destroy(Iterator* iterador) {
 	delete iterador;
 }
@@ -221,6 +199,7 @@ void UGitCommitGraph::Destroy(CommitGraph* graph) {
 	while (iterator != NULL) {
 		Vertex* toDelete = iterator;
 		iterator = iterator->next;
+		UGit::DestroyBag(toDelete->adyacency);
 		delete toDelete;
 	}
 }

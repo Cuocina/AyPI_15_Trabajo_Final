@@ -4,23 +4,23 @@
 #include "Branch.h"
 
 using namespace UGit;
+using UGit::Branch;
 
 namespace UGit {
 
-	// Dictionary:
 	struct BranchRegister;
 
-	// Precondicion: 
+	// Precondicion: Ninguna 
 	// Postcondición: Devuelve una instancia unica de BranchRegister. 
 	BranchRegister* GetBranchRegister();
 
 	// Precondición: @branchName es una instancia valida
 	// Postcondicion: Devuelve el Branch de @branchName
-	UGit::Branch* Get(BranchRegister* branchRegister, string branchName);
+	Branch* Get(BranchRegister* branchRegister, string branchName);
 
 	// Precondición: @branchregister @branch son instancias validas
 	// Postcondición: Si @branch no existe en @branchregister lo agrega
-	void Add(BranchRegister* branchRegister, UGit::Branch* branch);
+	void Add(BranchRegister* branchRegister, Branch* branch);
 
 	// Precondición:@branch es una instancia valida
 	// Postcondicion: Si el branch existe en @branchregister lo quita
@@ -34,7 +34,6 @@ namespace UGit {
 	// Precondición:@branchRegister es una intancia valida
 	// Postcondicion: Libera todos los recursos asociados de @branchRegister
 	void DestroyBranchRegister(BranchRegister* branchRegister);
-
 }
 
 #endif

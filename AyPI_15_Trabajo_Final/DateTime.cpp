@@ -9,8 +9,7 @@
 using UDateTime::DateTime;
 using namespace std;
 
-string MonthToString(int numMont);
-
+// Estructuras
 struct UDateTime::DateTime {
 	int year;
 	int month;
@@ -24,6 +23,7 @@ struct UDateTime::DateTime {
 string AddZero(int numero);
 bool IsBeforeMidday(int hour);
 bool IsValidData(int data, int start, int end);
+string MonthToString(int numMont);
 
 bool IsValidData(int data, int start, int end) {
 	bool isValidData;

@@ -13,20 +13,19 @@ namespace UGitCommitGraph {
 
 	// Precondicion: Ninguna
 	// Postcondicion:: Crea un vector de commits a partir de un grafo
-	Commit** CrearVector(CommitGraph* grafo);
+	Commit** CreateVector(CommitGraph* graph);
 
-	// Funciones Agregadas:
 	// Precondición: @grafo es una instancia valida
 	// Postcondición: Devuelve la cantidad de vertices del grafo
-	int CountVertex(CommitGraph* grafo);
+	int CountVertex(CommitGraph* graph);
 
 	// Precondición: Ninguna
 	// Postcondición:: Devuelve el indice del vector @vectorCommits donde se encuentra el valor @comienzo
-	int IndexOf(Commit** vectorCommits, Commit* comienzo);
+	int IndexOf(Commit** vectorCommits, Commit* commit);
 
 	// Precondición: @grafo es una instancia valida.
 	// Postcondición: Devuelve el Commit de @grafo en la posición indicada
-	Commit* GetCommit(CommitGraph* graph, int indice);
+	Commit* GetCommit(CommitGraph* graph, int index);
 
 	// Precondicion: @graph, @source y @destination son instancias validas
 	// Postcondicion: Si @source y @destination ya estan conectados no realiza ningun accion.
@@ -39,17 +38,14 @@ namespace UGitCommitGraph {
 
 	namespace AdyacencyListIterator {
 		struct Iterator;
-		Iterator* Comienzo(CommitGraph* graph, string commitHashCode);
+		Iterator* Begin(CommitGraph* graph, string commitHashCode);
 		bool End(const Iterator* iterator);
 		Commit* Get(Iterator* iterator);
 		void Next(Iterator* iterator);
 		void Destroy(Iterator* iterador);
 	}
-
 	void Destroy(CommitGraph* graph);
 }
-
-
 
 #endif
 

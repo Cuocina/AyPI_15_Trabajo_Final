@@ -45,10 +45,10 @@
     <ClCompile Include="CommitGraph.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="RecorridoAnchura.cpp">
+    <ClCompile Include="Row.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Cola.cpp">
+    <ClCompile Include="TravelWidth.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,10 +80,10 @@
     <ClInclude Include="CommitGraph.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
-    <ClInclude Include="RecorridoAnchura.h">
+    <ClInclude Include="Row.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
-    <ClInclude Include="Cola.h">
+    <ClInclude Include="TravelWidth.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>
