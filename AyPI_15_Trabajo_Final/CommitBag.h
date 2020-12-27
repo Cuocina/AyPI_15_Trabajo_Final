@@ -9,6 +9,7 @@ namespace UGit {
 	struct CommitBag;
 	CommitBag* CreateBag();
 	CommitBag* CreateBagCommit(Commit* commit);
+	CommitBag* Clone(CommitBag* bag);
 	void Add(CommitBag* bag, void* commit);
 	int Count(CommitBag* bag);
 	namespace UCommitBagIterator {

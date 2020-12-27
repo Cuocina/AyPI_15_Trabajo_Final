@@ -63,6 +63,18 @@ CommitBag * UGit::CreateBagCommit(Commit * commit){
 	return commitBag;
 }
 
+CommitBag* UGit::Clone(CommitBag* bag) {
+	CommitBag* newBag = CreateBag();
+	CommitBagIterator* iteratorBag = UGit::UCommitBagIterator::Begin(bag);
+	while (!UGit::UCommitBagIterator::IsEnd(iteratorBag)) {
+		UGit::Add(newBag, iteratorBag->node->item);
+		Next(iteratorBag);
+	}
+	UGit::Add(newBag, iteratorBag->node->item);
+
+	return newBag;
+}
+
 void UGit::Add(UGit::CommitBag * bag, void* commit) {
 	if (EstaVacia(bag)) {
 		bag->first = CreateNode((UGit::Commit*)commit);

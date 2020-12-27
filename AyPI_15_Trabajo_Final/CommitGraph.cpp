@@ -60,7 +60,7 @@ Vertex* GetVertex(CommitGraph*  graph, string hashCode) {
 
 Vertex* CreateVertex(Commit* commit) {
 	Vertex* vertex = new Vertex;
-	vertex->adyacency = (CommitBag*)UGit::GetParents(commit);
+	vertex->adyacency = UGit::Clone((CommitBag*)UGit::GetParents(commit));
 	vertex->commit = commit;
 	vertex->hashCode = UGit::GetHashCode(commit);
 	vertex->next = NULL;
